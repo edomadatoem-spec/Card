@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STRANNIK | PREMIUM ID</title>
+    <title>STRANNIK | PREMIER</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;600&display=swap');
 
         :root {
             --bg: #050505;
-            --card-bg: rgba(20, 20, 20, 0.7);
             --gold: #d4af37;
-            --gold-glow: rgba(212, 175, 55, 0.3);
-            --border: rgba(212, 175, 55, 0.15);
+            --card-bg: rgba(20, 20, 20, 0.8);
+            --border: rgba(212, 175, 55, 0.2);
         }
 
         body, html {
@@ -21,212 +20,121 @@
             background: var(--bg);
             color: #fff;
             font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
             height: 100%;
+            overflow: hidden;
         }
 
-        /* ЖИВОЙ ФОН С ЭФФЕКТОМ ГЛУБИНЫ */
-        .aura {
+        /* ПРЕМИАЛЬНЫЙ ФОН */
+        .glow-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% -10%, #1a1510 0%, #050505 100%);
+            background: radial-gradient(circle at 50% -20%, #1a1510 0%, #050505 100%);
             z-index: -1;
         }
 
-        .floating-orb {
-            position: absolute;
-            width: 400px; height: 400px;
-            background: var(--gold);
-            filter: blur(180px);
-            border-radius: 50%;
-            opacity: 0.07;
-            animation: float 15s infinite alternate ease-in-out;
-        }
-
-        @keyframes float {
-            0% { transform: translate(-10%, -10%); }
-            100% { transform: translate(30%, 20%); }
-        }
-
-        /* ПРЕМИАЛЬНЫЙ ЛОАДЕР */
-        #loader {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            transition: opacity 1s ease;
-        }
-
-        .loader-title {
-            font-weight: 100;
-            letter-spacing: 15px;
-            font-size: 1.5rem;
-            color: var(--gold);
-            text-shadow: 0 0 25px var(--gold-glow);
-            margin-bottom: 30px;
-            animation: pulseText 2s infinite;
-        }
-
-        @keyframes pulseText { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
-
-        /* ОСНОВНОЙ КОНТЕНТ */
-        .app-container {
-            display: none;
+        /* КНОПКИ */
+        .container {
             width: 100%;
             max-width: 400px;
             margin: 0 auto;
-            padding: 60px 25px;
+            padding: 80px 25px;
             box-sizing: border-box;
-            animation: fadeIn 1.2s ease-out;
+            text-align: center;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .main-logo {
+            font-weight: 100;
+            font-size: 2.5rem;
+            letter-spacing: 12px;
+            margin-bottom: 60px;
+            color: #fff;
+            text-transform: uppercase;
+        }
 
-        header { text-align: center; margin-bottom: 50px; }
-        .main-title { font-weight: 100; font-size: 2.2rem; letter-spacing: 10px; margin: 0; color: #fff; }
-        .tagline { font-size: 0.65rem; color: var(--gold); letter-spacing: 4px; margin-top: 10px; opacity: 0.8; }
-
-        /* КНОПКИ-КАРТОЧКИ */
-        .nav-card {
+        .action-card {
             background: var(--card-bg);
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 15px;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 18px;
             display: flex;
             align-items: center;
             text-decoration: none;
             color: #fff;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: pulseIn 1s ease-out;
         }
 
-        .nav-card:active { transform: scale(0.97); border-color: var(--gold); }
+        @keyframes pulseIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
-        /* Пульсирующая кнопка оплаты */
-        .pay-special {
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
-            animation: pulseGlow 3s infinite;
+        /* ЭФФЕКТ ПУЛЬСАЦИИ ОПЛАТЫ */
+        .pay-card {
+            border: 1px solid var(--gold);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+            animation: breathe 3s infinite ease-in-out;
         }
 
-        @keyframes pulseGlow {
+        @keyframes breathe {
             0%, 100% { box-shadow: 0 0 5px rgba(212, 175, 55, 0.1); }
-            50% { box-shadow: 0 0 25px rgba(212, 175, 55, 0.2); }
+            50% { box-shadow: 0 0 25px rgba(212, 175, 55, 0.3); border-color: #fff; }
         }
 
-        .icon-wrap {
-            width: 45px; height: 45px;
-            background: rgba(212, 175, 55, 0.05);
-            border-radius: 12px;
+        .icon-box {
+            width: 50px; height: 50px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 14px;
             display: flex; align-items: center; justify-content: center;
             margin-right: 20px;
             color: var(--gold);
-            font-size: 1.3rem;
+            font-size: 1.4rem;
         }
 
-        .info-wrap b { display: block; font-size: 1rem; font-weight: 400; letter-spacing: 1px; margin-bottom: 4px; }
-        .info-wrap span { font-size: 0.75rem; color: #666; }
-
-        /* ВЫПАДАЮЩИЙ МЕД-БЛОК */
-        .expand-box {
-            max-height: 0; overflow: hidden; transition: 0.5s ease;
-            background: rgba(212, 175, 55, 0.03); margin-top: -10px; margin-bottom: 15px;
-            border-radius: 0 0 16px 16px; border: 1px solid var(--border); border-top: none;
-        }
-
-        .expand-content { padding: 20px; font-size: 0.85rem; color: #aaa; line-height: 1.8; }
-        .expand-content b { color: var(--gold); }
+        .info-box { text-align: left; }
+        .info-box b { display: block; font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 4px; }
+        .info-box span { font-size: 0.8rem; color: #888; }
 
         footer {
-            margin-top: 70px; text-align: center;
-            font-size: 0.6rem; color: #333; letter-spacing: 5px;
+            margin-top: 100px;
+            font-size: 0.6rem;
+            color: #333;
+            letter-spacing: 6px;
         }
     </style>
 </head>
 <body>
 
-    <div class="aura"><div class="floating-orb"></div></div>
+    <div class="glow-bg"></div>
 
-    <div id="loader">
-        <div class="loader-title">STRANNIK</div>
-    </div>
+    <div class="container">
+        <div class="main-logo">STRANNIK</div>
 
-    <div class="app-container" id="main-content">
-        <header>
-            <div class="main-title">STRANNIK</div>
-            <div class="tagline">EXCLUSIVE DIGITAL ACCESS</div>
-        </header>
-
-        <a href="https://qr.nspk.ru/proxy-api/v1/payment/link/transfer?phone=79604373681&bank=100000000007" class="nav-card pay-special">
-            <div class="icon-wrap"><i class="fa-solid fa-crown"></i></div>
-            <div class="info-wrap">
-                <b>Оплата через СБП</b>
-                <span>Перевод по номеру 8 (960) 437-36-81</span>
+        <a href="https://www.sberbank.ru/sms/pbpn?p=79604373681" class="action-card pay-card">
+            <div class="icon-box"><i class="fa-solid fa-ruble-sign"></i></div>
+            <div class="info-box">
+                <b>Быстрая оплата</b>
+                <span>Прямой перевод на 8..36-81</span>
             </div>
         </a>
 
-        <a href="https://t.me/edomadatoem_spec" class="nav-card">
-            <div class="icon-wrap"><i class="fa-brands fa-telegram"></i></div>
-            <div class="info-wrap">
-                <b>Связаться в Telegram</b>
-                <span>Личный защищенный канал</span>
+        <a href="https://t.me/edomadatoem_spec" class="action-card">
+            <div class="icon-box"><i class="fa-brands fa-telegram"></i></div>
+            <div class="info-box">
+                <b>Связь с владельцем</b>
+                <span>Личный Telegram канал</span>
             </div>
         </a>
 
-        <div class="nav-card" onclick="toggleBox()">
-            <div class="icon-wrap"><i class="fa-solid fa-fingerprint"></i></div>
-            <div class="info-wrap">
-                <b>Медицинский ID</b>
-                <span>Карта владельца системы</span>
-            </div>
-        </div>
-        <div id="med-box" class="expand-box">
-            <div class="expand-content">
-                ГРУППА КРОВИ: <b>A+ (II)</b><br>
-                АЛЛЕРГИИ: <b>ОТСУТСТВУЮТ</b><br>
-                ЭКСТРЕННЫЙ КОНТАКТ: <b>+7 (960) 437-36-81</b><br>
-                СТАТУС: <b>VIP ВЛАДЕЛЕЦ</b>
+        <div class="action-card" onclick="alert('Группа: A+ (II) | Контакт: +79604373681')">
+            <div class="icon-box"><i class="fa-solid fa-dna"></i></div>
+            <div class="info-box">
+                <b>Медицинский профиль</b>
+                <span>Данные для экстренных служб</span>
             </div>
         </div>
 
-        <div class="nav-card" style="opacity: 0.4;" onclick="alert('Доступ ограничен. Требуется аппаратный ключ.')">
-            <div class="icon-wrap"><i class="fa-solid fa-shield-halved"></i></div>
-            <div class="info-wrap">
-                <b>Личный сейф</b>
-                <span>Зашифрованное хранилище файлов</span>
-            </div>
-        </div>
-
-        <footer>© 2026 STRANNIK // MAYKOP CITY</footer>
+        <footer>© 2026 // MAYKOP // PREMIUM ACCESS</footer>
     </div>
 
-    <script>
-        window.onload = () => {
-            setTimeout(() => {
-                const loader = document.getElementById('loader');
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                    document.getElementById('main-content').style.display = 'block';
-                }, 1000);
-            }, 2500);
-        }
-
-        function toggleBox() {
-            const box = document.getElementById('med-box');
-            if (box.style.maxHeight) {
-                box.style.maxHeight = null;
-            } else {
-                box.style.maxHeight = box.scrollHeight + "px";
-            }
-        }
-    </script>
 </body>
 </html>
