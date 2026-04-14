@@ -3,160 +3,358 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STRANNIK | PREMIER ACCESS</title>
+    <title>STRANNIK | PREMIER SYSTEM</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;400;600&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;600&display=swap');
-
         :root {
-            --bg: #050505;
-            --gold: #d4af37;
-            --card-bg: rgba(20, 20, 20, 0.95);
-            --border: rgba(212, 175, 55, 0.3);
+            --bg: #030303;
+            --accent: #d4af37; /* Золото */
+            --accent-glow: rgba(212, 175, 55, 0.4);
+            --card-bg: rgba(20, 20, 20, 0.7);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-dim: #888888;
         }
+
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
         body, html {
             margin: 0; padding: 0;
-            background: var(--bg);
-            color: #fff;
+            background-color: var(--bg);
+            color: var(--text-main);
             font-family: 'Inter', sans-serif;
-            overflow: hidden;
             height: 100%;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .background-glow {
+        /* ЖИВОЙ ЗАДНИЙ ФОН */
+        #canvas-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #030303 100%);
+        }
+
+        /* ПРЕМИАЛЬНЫЙ ЛОАДЕР */
+        #preloader {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% -10%, #1e1a11 0%, #050505 100%);
-            z-index: -1;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .container {
-            width: 100%;
+        .loader-content { text-align: center; }
+        .loader-logo {
+            font-weight: 100;
+            letter-spacing: 20px;
+            font-size: 1.8rem;
+            color: var(--accent);
+            text-shadow: 0 0 30px var(--accent-glow);
+            margin-bottom: 20px;
+            animation: pulse 2.5s infinite;
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(0.98); } 50% { opacity: 1; transform: scale(1); } }
+
+        /* ОСНОВНАЯ СЕТКА */
+        .wrapper {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
             max-width: 420px;
             margin: 0 auto;
-            padding: 50px 25px;
-            box-sizing: border-box;
-            text-align: center;
+            padding: 60px 20px;
         }
 
-        .logo { font-weight: 100; font-size: 2.2rem; letter-spacing: 15px; margin-bottom: 50px; text-transform: uppercase; }
+        .wrapper.active { opacity: 1; transform: translateY(0); }
 
-        /* ГЛАВНАЯ КНОПКА С ПУЛЬСАЦИЕЙ */
-        .btn-pay {
+        header { text-align: center; margin-bottom: 50px; }
+        .main-logo { font-weight: 100; font-size: 2.5rem; letter-spacing: 12px; margin: 0; text-transform: uppercase; }
+        .status-pill {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 4px 15px;
+            border: 1px solid var(--accent);
+            border-radius: 50px;
+            font-size: 0.6rem;
+            letter-spacing: 3px;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        /* КАРТОЧКИ УПРАВЛЕНИЯ */
+        .card {
             background: var(--card-bg);
-            border: 1px solid var(--gold);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
             cursor: pointer;
-            transition: 0.3s;
-            animation: pulseGold 3s infinite;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            color: white;
         }
 
-        @keyframes pulseGold {
-            0%, 100% { box-shadow: 0 0 5px rgba(212, 175, 55, 0.2); }
-            50% { box-shadow: 0 0 25px rgba(212, 175, 55, 0.4); border-color: #fff; }
+        .card:active { transform: scale(0.96); background: rgba(255,255,255,0.05); }
+
+        /* Спец-эффект для оплаты */
+        .card-pay {
+            border: 1px solid var(--accent);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+            animation: borderGlow 4s infinite;
         }
 
-        .btn-pay:active { transform: scale(0.95); }
+        @keyframes borderGlow {
+            0%, 100% { border-color: var(--accent); box-shadow: 0 0 10px rgba(212, 175, 55, 0.1); }
+            50% { border-color: #fff; box-shadow: 0 0 30px rgba(212, 175, 55, 0.3); }
+        }
 
-        .icon { font-size: 1.5rem; color: var(--gold); margin-right: 20px; }
-        .info { text-align: left; }
-        .info b { display: block; font-size: 1.1rem; letter-spacing: 1px; }
-        .info span { font-size: 0.8rem; color: #777; }
+        .card-icon {
+            width: 54px; height: 54px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            color: var(--accent);
+            font-size: 1.4rem;
+        }
 
-        /* МОДАЛЬНОЕ ОКНО С QR */
-        #qr-modal {
-            display: none;
+        .card-info { text-align: left; flex: 1; }
+        .card-info b { display: block; font-size: 1.1rem; font-weight: 400; margin-bottom: 4px; letter-spacing: 0.5px; }
+        .card-info span { font-size: 0.8rem; color: var(--text-dim); }
+
+        /* ВЫПАДАЮЩИЕ БЛОКИ */
+        .details-pane {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255,255,255,0.02);
+            margin-top: -10px; margin-bottom: 16px;
+            border-radius: 0 0 24px 24px;
+            border: 1px solid var(--border);
+            border-top: none;
+        }
+
+        .details-content { padding: 25px; font-size: 0.85rem; line-height: 1.8; color: #aaa; }
+        .details-content b { color: var(--accent); }
+
+        /* МОДАЛЬНОЕ ОКНО (QR) */
+        .modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
+            background: rgba(0,0,0,0.95);
+            display: none;
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(10px);
+            z-index: 10001;
+            backdrop-filter: blur(15px);
         }
 
-        .qr-card {
+        .modal-body {
+            width: 85%;
+            max-width: 320px;
             background: #111;
-            padding: 30px;
-            border-radius: 30px;
-            border: 1px solid var(--gold);
+            padding: 35px;
+            border-radius: 35px;
+            border: 1px solid var(--accent);
             text-align: center;
-            width: 80%;
-            max-width: 300px;
             position: relative;
         }
 
-        .qr-card img {
-            width: 100%;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            filter: brightness(1.1);
-        }
+        .modal-body img { width: 100%; border-radius: 20px; margin-bottom: 20px; }
+        .close-modal { position: absolute; top: -50px; right: 0; font-size: 2.5rem; color: #fff; cursor: pointer; }
 
-        .close-btn {
-            position: absolute;
-            top: -50px; right: 0;
-            color: #fff; font-size: 2rem;
+        footer {
+            margin-top: 80px;
+            text-align: center;
+            font-size: 0.6rem;
+            color: #222;
+            letter-spacing: 6px;
+            text-transform: uppercase;
         }
-
-        /* ОСТАЛЬНЫЕ КНОПКИ */
-        .btn-simple {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: #fff;
-        }
-
-        footer { margin-top: 80px; font-size: 0.6rem; color: #222; letter-spacing: 5px; }
     </style>
 </head>
 <body>
 
-    <div class="background-glow"></div>
+    <canvas id="canvas-bg"></canvas>
 
-    <div class="container">
-        <div class="logo">STRANNIK</div>
+    <div id="preloader">
+        <div class="loader-content">
+            <div class="loader-logo">STRANNIK</div>
+        </div>
+    </div>
 
-        <div class="btn-pay" onclick="openQR()">
-            <div class="icon"><i class="fa-solid fa-qrcode"></i></div>
-            <div class="info">
-                <b>Оплатить через СБП</b>
-                <span>Мгновенный перевод по QR</span>
+    <div class="wrapper" id="mainUI">
+        <header>
+            <h1 class="main-logo">STRANNIK</h1>
+            <div class="status-pill">СИСТЕМА АКТИВНА</div>
+        </header>
+
+        <div class="card card-pay" onclick="handlePayment()">
+            <div class="card-icon"><i class="fa-solid fa-crown"></i></div>
+            <div class="card-info">
+                <b>Быстрая оплата</b>
+                <span>Авто-переход в приложение банка</span>
             </div>
         </div>
 
-        <a href="https://t.me/edomadatoem_spec" class="btn-simple">
-            <div class="icon"><i class="fa-brands fa-telegram"></i></div>
-            <div class="info">
-                <b>Telegram</b>
-                <span>Личный контакт</span>
+        <a href="https://t.me/edomadatoem_spec" class="card">
+            <div class="card-icon"><i class="fa-brands fa-telegram"></i></div>
+            <div class="card-info">
+                <b>Связаться в TG</b>
+                <span>Личный зашифрованный чат</span>
             </div>
         </a>
 
-        <footer>STRANNIK // MAYKOP // 2026</footer>
+        <div class="card" onclick="toggleDetails('med-data')">
+            <div class="card-icon"><i class="fa-solid fa-fingerprint"></i></div>
+            <div class="card-info">
+                <b>Медицинский ID</b>
+                <span>Группа крови и контакты</span>
+            </div>
+        </div>
+        <div id="med-data" class="details-pane">
+            <div class="details-content">
+                ВЛАДЕЛЕЦ: <b>ПОЛУНОЧНЫЙ СТРАННИК</b><br>
+                ГРУППА КРОВИ: <b>A+ (II)</b><br>
+                АЛЛЕРГИИ: <b>НЕ ВЫЯВЛЕНЫ</b><br>
+                ЭКСТРЕННЫЙ СВЯЗЬ: <b>+7 960 437-36-81</b>
+            </div>
+        </div>
+
+        <div class="card" onclick="toggleDetails('loc-data')">
+            <div class="card-icon"><i class="fa-solid fa-location-dot"></i></div>
+            <div class="card-info">
+                <b>Локация</b>
+                <span>Текущий регион базирования</span>
+            </div>
+        </div>
+        <div id="loc-data" class="details-pane">
+            <div class="details-content">
+                РЕГИОН: <b>РЕСПУБЛИКА АДЫГЕЯ</b><br>
+                ГОРОД: <b>МАЙКОП</b><br>
+                СТАТУС: <b>ОНЛАЙН</b>
+            </div>
+        </div>
+
+        <div class="card" style="opacity: 0.4;" onclick="alert('ОШИБКА: Требуется физический ключ доступа')">
+            <div class="card-icon"><i class="fa-solid fa-vault"></i></div>
+            <div class="card-info">
+                <b>Личный архив</b>
+                <span>Документы и спецсвязь</span>
+            </div>
+        </div>
+
+        <footer>© 2026 // MAYKOP // STRANNIK DEVELOPMENT</footer>
     </div>
 
-    <div id="qr-modal" onclick="closeQR()">
-        <div class="qr-card" onclick="event.stopPropagation()">
-            <div class="close-btn">&times;</div>
-            <img src="https://i.ibb.co/Xxd9nS8/qr-placeholder.png" id="qr-image" alt="QR Code">
-            <p style="font-size: 0.9rem; color: var(--gold);">Отсканируйте или нажмите на QR для оплаты</p>
+    <div id="qrModal" class="modal" onclick="closeQR()">
+        <div class="modal-body" onclick="event.stopPropagation()">
+            <div class="close-modal" onclick="closeQR()">&times;</div>
+            <p style="margin-top: 0; color: var(--accent); letter-spacing: 2px; font-size: 0.8rem;">ВАШ ПЕРСОНАЛЬНЫЙ QR</p>
+            <img src="https://i.ibb.co/Xxd9nS8/qr-placeholder.png" id="qrImg">
+            <p style="font-size: 0.75rem; color: #555;">Нажмите на код или отсканируйте камерой банка</p>
         </div>
     </div>
 
     <script>
-        function openQR() { document.getElementById('qr-modal').style.display = 'flex'; }
-        function closeQR() { document.getElementById('qr-modal').style.display = 'none'; }
+        // ЭФФЕКТ ЧАСТИЦ НА ФОНЕ
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedY = Math.random() * 0.5;
+                this.opacity = Math.random() * 0.5;
+            }
+            update() {
+                this.y -= this.speedY;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(212, 175, 55, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 50; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // ЛОГИКА ИНТЕРФЕЙСА
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('preloader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('preloader').style.display = 'none';
+                    document.getElementById('mainUI').classList.add('active');
+                }, 1000);
+            }, 2000);
+        };
+
+        function toggleDetails(id) {
+            const el = document.getElementById(id);
+            if (el.style.maxHeight) {
+                el.style.maxHeight = null;
+            } else {
+                document.querySelectorAll('.details-pane').forEach(p => p.style.maxHeight = null);
+                el.style.maxHeight = el.scrollHeight + "px";
+            }
+        }
+
+        // ГЛАВНАЯ ФУНКЦИЯ ОПЛАТЫ (БЕЗ 404)
+        function handlePayment() {
+            // Прямая команда на открытие Сбера. Это не сайт, это протокол.
+            const sberLink = "https://www.sberbank.ru/sms/pbpn?p=79604373681";
+            
+            // Пробуем перейти. Если на телефоне есть Сбер — он перехватит ссылку.
+            window.location.href = sberLink;
+
+            // Если через 2.5 сек ничего не произошло (клиент остался на странице), 
+            // значит авто-переход не сработал. Показываем QR.
+            setTimeout(() => {
+                document.getElementById('qrModal').style.display = 'flex';
+            }, 2500);
+        }
+
+        function closeQR() {
+            document.getElementById('qrModal').style.display = 'none';
+        }
     </script>
 </body>
 </html>
