@@ -3,159 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STRANNIK | PREMIER SYSTEM</title>
+    <title>STRANNIK | THE JORMUNGAND UPDATE v3.0</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;400;600&display=swap" rel="stylesheet">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;600&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
     
     <style>
+        /* ЦВЕТОВАЯ ПАЛИТРА СИСТЕМЫ 
+           Основа: Глубокий черный и матовое золото.
+        */
         :root {
-            --bg: #030303;
-            --accent: #d4af37; /* Золото */
-            --accent-glow: rgba(212, 175, 55, 0.4);
-            --card-bg: rgba(20, 20, 20, 0.7);
-            --border: rgba(255, 255, 255, 0.08);
-            --text-main: #ffffff;
-            --text-dim: #888888;
+            --bg-dark: #000000;
+            --bg-panel: rgba(15, 15, 15, 0.85);
+            --accent-gold: #d4af37;
+            --accent-glow: rgba(212, 175, 55, 0.5);
+            --text-primary: #ffffff;
+            --text-secondary: #aaaaaa;
+            --border-color: rgba(212, 175, 55, 0.2);
+            --neon-green: #0f0; /* Для эффекта Матрицы */
+            --transition-speed: 0.4s;
         }
 
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        /* БАЗОВЫЕ СТИЛИ */
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* Убираем подсветку клика на iOS */
+            outline: none;
+        }
 
         body, html {
             margin: 0; padding: 0;
-            background-color: var(--bg);
-            color: var(--text-main);
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
             font-family: 'Inter', sans-serif;
             height: 100%;
-            overflow-x: hidden;
+            overflow: hidden; /* Запрещаем скролл всего тела */
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ЖИВОЙ ЗАДНИЙ ФОН */
-        #canvas-bg {
+        /* КОНТЕЙНЕР ДЛЯ 3D ФОНА (ЭФФЕКТ МАТРИЦЫ)
+        */
+        #matrix-canvas {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #030303 100%);
+            z-index: -2;
+            opacity: 0.15; /* Очень тонкий эффект */
         }
 
-        /* ПРЕМИАЛЬНЫЙ ЛОАДЕР */
+        /* КОНТЕЙНЕР ДЛЯ THREE.JS ЗМЕИ 
+           Этот canvas будет лежать ПОВЕРХ логотипа.
+        */
+        #snake-3d-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 10; /* Выше текста */
+            pointer-events: none; /* Пропускаем клики сквозь змею */
+        }
+
+        /* ПРЕЛОАДЕР */
         #preloader {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: #000;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
-            transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10000;
+            transition: opacity 1s ease;
         }
 
-        .loader-content { text-align: center; }
-        .loader-logo {
-            font-weight: 100;
-            letter-spacing: 20px;
-            font-size: 1.8rem;
-            color: var(--accent);
-            text-shadow: 0 0 30px var(--accent-glow);
-            margin-bottom: 20px;
-            animation: pulse 2.5s infinite;
+        .loader-content {
+            text-align: center;
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 2rem;
+            color: var(--accent-gold);
+            text-shadow: 0 0 20px var(--accent-glow);
+            animation: pulseText 2s infinite;
         }
 
-        @keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(0.98); } 50% { opacity: 1; transform: scale(1); } }
+        @keyframes pulseText { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
 
-        /* ОСНОВНАЯ СЕТКА */
-        .wrapper {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-            max-width: 420px;
-            margin: 0 auto;
-            padding: 60px 20px;
+        /* ГЛАВНЫЙ ОБОЛОЧКА (WRAPPER) */
+        #app-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            opacity: 0; /* Скрыт до конца загрузки */
+            transition: opacity 1s ease 0.5s;
+            overflow-y: auto; /* Разрешаем скролл внутри */
+            -webkit-overflow-scrolling: touch; /* Плавный скролл на iOS */
         }
 
-        .wrapper.active { opacity: 1; transform: translateY(0); }
+        #app-wrapper.loaded { opacity: 1; }
 
-        header { text-align: center; margin-bottom: 50px; }
-        .main-logo { font-weight: 100; font-size: 2.5rem; letter-spacing: 12px; margin: 0; text-transform: uppercase; }
-        .status-pill {
+        /* ОСНОВНОЙ КОНТЕНТ */
+        .content {
+            width: 100%;
+            max-width: 420px; /* Идеально для телефонов */
+            padding: 40px 20px 100px 20px; /* Отступ снизу для четок */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ХЕДЕР С ЛОГОТИПОМ И ЗМЕЕЙ */
+        header {
+            position: relative; /* База для абсолютного canvas змеи */
+            width: 100%;
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 20px 0;
+        }
+
+        .logo-container {
+            position: relative;
             display: inline-block;
-            margin-top: 15px;
-            padding: 4px 15px;
-            border: 1px solid var(--accent);
-            border-radius: 50px;
-            font-size: 0.6rem;
-            letter-spacing: 3px;
-            color: var(--accent);
-            text-transform: uppercase;
         }
 
-        /* КАРТОЧКИ УПРАВЛЕНИЯ */
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 24px;
-            margin-bottom: 16px;
+        .main-logo {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 3.5rem; /* Сделали БОЛЬШЕ */
+            letter-spacing: 5px;
+            margin: 0;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+            position: relative;
+            z-index: 5; /* Ниже змеи */
+        }
+
+        /* КАРТОЧКИ МЕНЮ */
+        .menu-card {
+            background: var(--bg-panel);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 15px;
+            width: 100%;
             display: flex;
             align-items: center;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
+            transition: all var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-decoration: none;
             color: white;
+            position: relative;
+            overflow: hidden;
         }
 
-        .card:active { transform: scale(0.96); background: rgba(255,255,255,0.05); }
+        .menu-card:active {
+            transform: scale(0.97);
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
 
-        /* Спец-эффект для оплаты */
+        /* Эффект пульсации для карты оплаты */
         .card-pay {
-            border: 1px solid var(--accent);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
-            animation: borderGlow 4s infinite;
+            border: 1px solid var(--accent-gold);
+            animation: goldGlow 3s infinite;
         }
 
-        @keyframes borderGlow {
-            0%, 100% { border-color: var(--accent); box-shadow: 0 0 10px rgba(212, 175, 55, 0.1); }
-            50% { border-color: #fff; box-shadow: 0 0 30px rgba(212, 175, 55, 0.3); }
+        @keyframes goldGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(212, 175, 55, 0.1); }
+            50% { box-shadow: 0 0 30px rgba(212, 175, 55, 0.4); border-color: #fff; }
         }
 
         .card-icon {
-            width: 54px; height: 54px;
-            background: rgba(212, 175, 55, 0.1);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 55px; height: 55px;
+            background: rgba(212, 175, 55, 0.08);
+            border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
             margin-right: 20px;
-            color: var(--accent);
-            font-size: 1.4rem;
+            color: var(--accent-gold);
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 2;
         }
 
-        .card-info { text-align: left; flex: 1; }
-        .card-info b { display: block; font-size: 1.1rem; font-weight: 400; margin-bottom: 4px; letter-spacing: 0.5px; }
-        .card-info span { font-size: 0.8rem; color: var(--text-dim); }
+        .card-content { flex: 1; position: relative; z-index: 2; }
+        .card-content b { display: block; font-size: 1.1rem; font-weight: 400; margin-bottom: 4px; letter-spacing: 0.5px; }
+        .card-content span { font-size: 0.8rem; color: var(--text-secondary); }
 
-        /* ВЫПАДАЮЩИЕ БЛОКИ */
-        .details-pane {
+        /* ВЫПАДАЮЩИЕ ПАНЕЛИ */
+        .accordion-panel {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             background: rgba(255,255,255,0.02);
-            margin-top: -10px; margin-bottom: 16px;
-            border-radius: 0 0 24px 24px;
-            border: 1px solid var(--border);
+            margin-top: -10px; margin-bottom: 15px;
+            border-radius: 0 0 20px 20px;
+            border: 1px solid var(--border-color);
             border-top: none;
+            width: 100%;
         }
 
-        .details-content { padding: 25px; font-size: 0.85rem; line-height: 1.8; color: #aaa; }
-        .details-content b { color: var(--accent); }
+        .accordion-panel.open { max-height: 1000px; /* Огромный запас */ }
 
-        /* МОДАЛЬНОЕ ОКНО (QR) */
+        .panel-content { padding: 30px; font-size: 0.9rem; line-height: 1.8; color: #ccc; }
+        .panel-content b { color: var(--accent-gold); }
+
+        /* ФУТЕР */
+        footer {
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.6rem;
+            color: #333;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            padding-bottom: 20px;
+        }
+
+        /* СТИЛИ ДЛЯ НОВЫХ ФУНКЦИЙ 
+        */
+
+        /* Модальное окно (QR) */
         .modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -166,195 +237,399 @@
             z-index: 10001;
             backdrop-filter: blur(15px);
         }
+        .modal-content {
+            width: 85%; max-width: 320px;
+            background: #111; padding: 30px; border-radius: 30px;
+            border: 1px solid var(--accent-gold); text-align: center;
+        }
+        .modal-content img { width: 100%; border-radius: 15px; margin-bottom: 15px; }
 
-        .modal-body {
-            width: 85%;
-            max-width: 320px;
-            background: #111;
-            padding: 35px;
-            border-radius: 35px;
-            border: 1px solid var(--accent);
-            text-align: center;
-            position: relative;
+        /* Утилита: Генератор Паролей */
+        .pass-gen-input {
+            width: 100%; background: #000; border: 1px solid #333; color: var(--neon-green);
+            padding: 10px; font-family: monospace; font-size: 1rem; text-align: center; margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .gen-btn {
+            background: var(--accent-gold); color: #000; border: none; padding: 10px 20px;
+            border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%;
         }
 
-        .modal-body img { width: 100%; border-radius: 20px; margin-bottom: 20px; }
-        .close-modal { position: absolute; top: -50px; right: 0; font-size: 2.5rem; color: #fff; cursor: pointer; }
+        /* Биоритмы */
+        .bio-bar-bg { width: 100%; height: 6px; background: #222; border-radius: 10px; margin: 5px 0 15px 0; overflow: hidden; }
+        .bio-bar-fill { height: 100%; background: var(--accent-gold); width: 0%; transition: width 1s ease; }
 
-        footer {
-            margin-top: 80px;
-            text-align: center;
-            font-size: 0.6rem;
-            color: #222;
-            letter-spacing: 6px;
-            text-transform: uppercase;
+        /* Цифровые Четки */
+        #beads-container {
+            position: fixed;
+            bottom: 20px; left: 50%;
+            transform: translateX(-50%);
+            display: flex; gap: 10px;
+            background: var(--bg-panel);
+            padding: 10px 20px; border-radius: 50px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 100;
         }
+        .bead {
+            width: 15px; height: 15px; background: #333; border-radius: 50%;
+            cursor: pointer; transition: 0.2s;
+        }
+        .bead:active { background: var(--accent-gold); transform: scale(1.3); }
+
+        /* Система Уведомлений */
+        #notif-container {
+            position: fixed; top: 20px; right: 20px;
+            z-index: 20000; display: flex; flex-direction: column; gap: 10px;
+        }
+        .notif {
+            background: #111; border: 1px solid var(--accent-gold); color: #fff;
+            padding: 15px; border-radius: 10px; font-size: 0.8rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            animation: notifIn 0.5s ease forwards, notifOut 0.5s ease forwards 4s;
+        }
+        @keyframes notifIn { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes notifOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(50px); } }
+
     </style>
 </head>
 <body>
 
-    <canvas id="canvas-bg"></canvas>
+    <canvas id="snake-3d-canvas"></canvas>
+    <canvas id="matrix-canvas"></canvas>
+
+    <audio id="snd-nfc" src="https://cdn.pixabay.com/audio/2022/03/15/audio_2c8f85f5e8.mp3"></audio>
+    <audio id="snd-click" src="https://cdn.pixabay.com/audio/2023/09/18/audio_19e680a656.mp3"></audio>
 
     <div id="preloader">
-        <div class="loader-content">
-            <div class="loader-logo">STRANNIK</div>
+        <div class="loader-content">ИНИЦИАЛИЗАЦИЯ...</div>
+    </div>
+
+    <div id="app-wrapper">
+        <div class="content">
+            <header>
+                <div class="logo-container">
+                    <h1 class="main-logo">СТРАННИК</h1>
+                    </div>
+                <br>
+                <div class="status-pill">ПРЕМИУМ ДОСТУП АКТИВИРОВАН</div>
+            </header>
+
+            <div class="menu-card card-pay" onclick="handleSecurePayment()">
+                <div class="card-icon"><i class="fa-solid fa-crown"></i></div>
+                <div class="card-content">
+                    <b>Мгновенная оплата СБП</b>
+                    <span>Без ввода номера телефона • 8..36-81</span>
+                </div>
+            </div>
+
+            <a href="https://t.me/edomadatoem_spec" class="menu-card" target="_blank" onclick="playSound('click')">
+                <div class="card-icon"><i class="fa-brands fa-telegram"></i></div>
+                <div class="card-content">
+                    <b>Личный Telegram</b>
+                    <span>Прямой зашифрованный канал связи</span>
+                </div>
+            </a>
+
+            <div class="menu-card" onclick="toggleAccordion('med-panel')">
+                <div class="card-icon"><i class="fa-solid fa-fingerprint"></i></div>
+                <div class="card-content">
+                    <b>Медицинский профиль</b>
+                    <span>Данные для экстренных служб</span>
+                </div>
+            </div>
+            <div id="med-panel" class="accordion-panel">
+                <div class="panel-content">
+                    ВЛАДЕЛЕЦ: <b>ПОЛУНОЧНЫЙ СТРАННИК</b><br>
+                    ГРУППА КРОВИ: <b>A+ (II)</b><br>
+                    АЛЛЕРГИИ: <b>ОТСУТСТВУЮТ</b><br>
+                    ЭКСТРЕННЫЙ КОНТАКТ: <b>+7 (960) 437-36-81</b><br>
+                    ПРИМЕЧАНИЕ: <b>Имеется встроенный NFC имплант</b>
+                </div>
+            </div>
+
+            <div class="menu-card" onclick="toggleAccordion('loc-panel')">
+                <div class="card-icon"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="card-content">
+                    <b>Текущая локация</b>
+                    <span>Регион базирования владельца</span>
+                </div>
+            </div>
+            <div id="loc-panel" class="accordion-panel">
+                <div class="panel-content">
+                    РЕГИОН: <b>РЕСПУБЛИКА АДЫГЕЯ</b><br>
+                    ГОРОД: <b>МАЙКОП</b><br>
+                    СТАТУС: <b>ОНЛАЙН</b><br>
+                    <span style="color: #555; font-size: 0.7rem;">Координаты зашифрованы протоколом STRANNIK_VPN</span>
+                </div>
+            </div>
+
+            <div class="menu-card" onclick="toggleAccordion('pass-panel')">
+                <div class="card-icon"><i class="fa-solid fa-key"></i></div>
+                <div class="card-content">
+                    <b>Крипто-Генератор Ключей</b>
+                    <span>Создание надежных паролей</span>
+                </div>
+            </div>
+            <div id="pass-panel" class="accordion-panel">
+                <div class="panel-content">
+                    <input type="text" id="generated-pass" class="pass-gen-input" readonly value="Нажми сгенерировать">
+                    <button class="gen-btn" onclick="generateSecurePassword()">СГЕНЕРИРОВАТЬ ПАРОЛЬ</button>
+                </div>
+            </div>
+
+            <div class="menu-card" onclick="toggleAccordion('bio-panel')">
+                <div class="card-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+                <div class="card-content">
+                    <b>Биометрический Статус</b>
+                    <span>Текущее состояние владельца</span>
+                </div>
+            </div>
+            <div id="bio-panel" class="accordion-panel">
+                <div class="panel-content" id="bio-content">
+                    </div>
+            </div>
+
+            <div class="menu-card" style="opacity: 0.3;" onclick="showHackerAlert()">
+                <div class="card-icon"><i class="fa-solid fa-vault"></i></div>
+                <div class="card-content">
+                    <b>Личный сейф</b>
+                    <span>Доступ только по NFC ключу</span>
+                </div>
+            </div>
+
+            <footer>© 2026 // MAYKOP // STRANNIK SYSTEMS</footer>
         </div>
     </div>
 
-    <div class="wrapper" id="mainUI">
-        <header>
-            <h1 class="main-logo">STRANNIK</h1>
-            <div class="status-pill">СИСТЕМА АКТИВНА</div>
-        </header>
-
-        <div class="card card-pay" onclick="handlePayment()">
-            <div class="card-icon"><i class="fa-solid fa-crown"></i></div>
-            <div class="card-info">
-                <b>Быстрая оплата</b>
-                <span>Авто-переход в приложение банка</span>
-            </div>
-        </div>
-
-        <a href="https://t.me/edomadatoem_spec" class="card">
-            <div class="card-icon"><i class="fa-brands fa-telegram"></i></div>
-            <div class="card-info">
-                <b>Связаться в TG</b>
-                <span>Личный зашифрованный чат</span>
-            </div>
-        </a>
-
-        <div class="card" onclick="toggleDetails('med-data')">
-            <div class="card-icon"><i class="fa-solid fa-fingerprint"></i></div>
-            <div class="card-info">
-                <b>Медицинский ID</b>
-                <span>Группа крови и контакты</span>
-            </div>
-        </div>
-        <div id="med-data" class="details-pane">
-            <div class="details-content">
-                ВЛАДЕЛЕЦ: <b>ПОЛУНОЧНЫЙ СТРАННИК</b><br>
-                ГРУППА КРОВИ: <b>A+ (II)</b><br>
-                АЛЛЕРГИИ: <b>НЕ ВЫЯВЛЕНЫ</b><br>
-                ЭКСТРЕННЫЙ СВЯЗЬ: <b>+7 960 437-36-81</b>
-            </div>
-        </div>
-
-        <div class="card" onclick="toggleDetails('loc-data')">
-            <div class="card-icon"><i class="fa-solid fa-location-dot"></i></div>
-            <div class="card-info">
-                <b>Локация</b>
-                <span>Текущий регион базирования</span>
-            </div>
-        </div>
-        <div id="loc-data" class="details-pane">
-            <div class="details-content">
-                РЕГИОН: <b>РЕСПУБЛИКА АДЫГЕЯ</b><br>
-                ГОРОД: <b>МАЙКОП</b><br>
-                СТАТУС: <b>ОНЛАЙН</b>
-            </div>
-        </div>
-
-        <div class="card" style="opacity: 0.4;" onclick="alert('ОШИБКА: Требуется физический ключ доступа')">
-            <div class="card-icon"><i class="fa-solid fa-vault"></i></div>
-            <div class="card-info">
-                <b>Личный архив</b>
-                <span>Документы и спецсвязь</span>
-            </div>
-        </div>
-
-        <footer>© 2026 // MAYKOP // STRANNIK DEVELOPMENT</footer>
-    </div>
-
-    <div id="qrModal" class="modal" onclick="closeQR()">
-        <div class="modal-body" onclick="event.stopPropagation()">
-            <div class="close-modal" onclick="closeQR()">&times;</div>
-            <p style="margin-top: 0; color: var(--accent); letter-spacing: 2px; font-size: 0.8rem;">ВАШ ПЕРСОНАЛЬНЫЙ QR</p>
-            <img src="https://i.ibb.co/Xxd9nS8/qr-placeholder.png" id="qrImg">
-            <p style="font-size: 0.75rem; color: #555;">Нажмите на код или отсканируйте камерой банка</p>
+    <div id="qrModal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img src="https://i.ibb.co/Xxd9nS8/qr-placeholder.png" alt="QR СБП">
+            <p style="color: var(--accent-gold); font-size: 0.9rem;">Нажми на QR или отсканируй</p>
         </div>
     </div>
+
+    <div id="beads-container">
+        <div class="bead" onclick="clickBead(1)"></div>
+        <div class="bead" onclick="clickBead(2)"></div>
+        <div class="bead" onclick="clickBead(3)"></div>
+        <div class="bead" onclick="clickBead(4)"></div>
+        <div class="bead" onclick="clickBead(5)"></div>
+    </div>
+
+    <div id="notif-container"></div>
 
     <script>
-        // ЭФФЕКТ ЧАСТИЦ НА ФОНЕ
-        const canvas = document.getElementById('canvas-bg');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
+        // --- ЧАСТЬ 2: ЦИФРОВОЙ ИНТЕЛЛЕКТ СТРАННИКА ---
 
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
+        // Инициализация переменных для 3D
+        let scene, camera, renderer, snake;
+        const clock = new THREE.Clock();
 
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2;
-                this.speedY = Math.random() * 0.5;
-                this.opacity = Math.random() * 0.5;
+        // 1. ИНИЦИАЛИЗАЦИЯ 3D СЦЕНЫ (THREE.JS)
+        function init3D() {
+            const container = document.querySelector('.logo-container');
+            const canvas = document.getElementById('snake-3d-canvas');
+            
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / 400, 0.1, 1000);
+            camera.position.z = 5;
+
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, 300);
+            renderer.setPixelRatio(window.devicePixelRatio);
+
+            // Создаем процедурную змею из сегментов
+            const segmentCount = 20;
+            const segments = [];
+            const snakeGroup = new THREE.Group();
+
+            for (let i = 0; i < segmentCount; i++) {
+                const geometry = new THREE.SphereGeometry(i === 0 ? 0.4 : 0.3 - (i * 0.01), 32, 32);
+                const material = new THREE.MeshStandardMaterial({ 
+                    color: i === 0 ? 0xd4af37 : 0x111111, 
+                    roughness: 0.2,
+                    metalness: 0.8 
+                });
+                const mesh = new THREE.Mesh(geometry, material);
+                segments.push(mesh);
+                snakeGroup.add(mesh);
             }
-            update() {
-                this.y -= this.speedY;
-                if (this.y < 0) this.y = canvas.height;
-            }
-            draw() {
-                ctx.fillStyle = `rgba(212, 175, 55, ${this.opacity})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
+
+            // Добавляем язык змеи (раздвоенный)
+            const tongueGeom = new THREE.BoxGeometry(0.05, 0.01, 0.4);
+            const tongueMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            const tongue = new THREE.Mesh(tongueGeom, tongueMat);
+            tongue.position.z = 0.4;
+            segments[0].add(tongue);
+
+            scene.add(snakeGroup);
+            snake = segments;
+
+            // Свет
+            const light = new THREE.PointLight(0xd4af37, 2, 100);
+            light.position.set(5, 5, 5);
+            scene.add(light);
+            scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+
+            animate3D();
         }
 
-        for (let i = 0; i < 50; i++) particles.push(new Particle());
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            const t = clock.getElapsedTime();
 
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animate);
+            // Логика движения змеи между буквами
+            snake.forEach((seg, i) => {
+                const delay = i * 0.15;
+                seg.position.x = Math.sin(t * 2 - delay) * 2;
+                seg.position.y = Math.cos(t * 1.5 - delay) * 0.5;
+                seg.position.z = Math.sin(t * 1 - delay) * 0.5;
+            });
+
+            // Анимация языка
+            snake[0].children[0].scale.z = Math.abs(Math.sin(t * 10)) > 0.8 ? 1.5 : 0;
+
+            renderer.render(scene, camera);
         }
-        animate();
 
-        // ЛОГИКА ИНТЕРФЕЙСА
+        // 2. ЭФФЕКТ МАТРИЦЫ НА ФОНЕ
+        const mCanvas = document.getElementById('matrix-canvas');
+        const mCtx = mCanvas.getContext('2d');
+        let symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*";
+        symbols = symbols.split("");
+        let fontSize = 14;
+        let columns;
+        let drops = [];
+
+        function initMatrix() {
+            mCanvas.width = window.innerWidth;
+            mCanvas.height = window.innerHeight;
+            columns = mCanvas.width / fontSize;
+            for (let i = 0; i < columns; i++) drops[i] = 1;
+            drawMatrix();
+        }
+
+        function drawMatrix() {
+            mCtx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            mCtx.fillRect(0, 0, mCanvas.width, mCanvas.height);
+            mCtx.fillStyle = "#d4af37";
+            mCtx.font = fontSize + "px monospace";
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = symbols[Math.floor(Math.random() * symbols.length)];
+                mCtx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > mCanvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+            setTimeout(drawMatrix, 50);
+        }
+
+        // 3. ФУНКЦИИ ОПЛАТЫ (БЕЗ 404)
+        function handleSecurePayment() {
+            playSound('nfc');
+            showNotif("Инициализация протокола СБП...");
+            
+            // Прямая ссылка на Сбербанк (Deep Link)
+            const payUrl = "https://www.sberbank.ru/sms/pbpn?p=79604373681";
+            
+            // Пробуем открыть приложение напрямую
+            window.location.href = payUrl;
+
+            // Если не перекинуло за 2 секунды - выводим QR
+            setTimeout(() => {
+                document.getElementById('qrModal').style.display = 'flex';
+                showNotif("Используйте QR-код для оплаты");
+            }, 2500);
+        }
+
+        // 4. ГЕНЕРАТОР ПАРОЛЕЙ
+        function generateSecurePassword() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+            let pass = "";
+            for (let i = 0; i < 16; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+            document.getElementById('generated-pass').value = pass;
+            showNotif("Новый ключ сгенерирован");
+            playSound('click');
+        }
+
+        // 5. БИОРИТМЫ (ДИНАМИКА)
+        function updateBio() {
+            const bioBox = document.getElementById('bio-content');
+            const metrics = [
+                { name: 'ФИЗИЧЕСКИЙ РЕСУРС', val: 85 },
+                { name: 'ЭМОЦИОНАЛЬНЫЙ ФОН', val: 92 },
+                { name: 'ИНТЕЛЛЕКТУАЛЬНАЯ МОЩЬ', val: 78 }
+            ];
+
+            bioBox.innerHTML = metrics.map(m => `
+                <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--accent-gold)">
+                    <span>${m.name}</span><span>${m.val}%</span>
+                </div>
+                <div class="bio-bar-bg"><div class="bio-bar-fill" style="width:${m.val}%"></div></div>
+            `).join('');
+        }
+
+        // 6. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+        function toggleAccordion(id) {
+            playSound('click');
+            const el = document.getElementById(id);
+            el.classList.toggle('open');
+        }
+
+        function playSound(type) {
+            const s = document.getElementById(type === 'nfc' ? 'snd-nfc' : 'snd-click');
+            if (s) { s.currentTime = 0; s.play().catch(() => {}); }
+        }
+
+        function showNotif(text) {
+            const container = document.getElementById('notif-container');
+            const n = document.createElement('div');
+            n.className = 'notif';
+            n.innerHTML = `<i class="fa-solid fa-bolt" style="margin-right:10px"></i> ${text}`;
+            container.appendChild(n);
+            setTimeout(() => n.remove(), 4500);
+        }
+
+        function clickBead(n) {
+            if (window.navigator.vibrate) window.navigator.vibrate(50);
+            showNotif(`Бусина ${n} активирована`);
+            playSound('click');
+        }
+
+        function closeModal() { document.getElementById('qrModal').style.display = 'none'; }
+        
+        function showHackerAlert() {
+            showNotif("ОШИБКА ДОСТУПА: УРОВЕНЬ 4");
+            if (window.navigator.vibrate) window.navigator.vibrate([100, 50, 100]);
+        }
+
+        // СТАРТ ВСЕЙ СИСТЕМЫ
         window.onload = () => {
+            initMatrix();
+            init3D();
+            updateBio();
+            
             setTimeout(() => {
                 document.getElementById('preloader').style.opacity = '0';
                 setTimeout(() => {
                     document.getElementById('preloader').style.display = 'none';
-                    document.getElementById('mainUI').classList.add('active');
+                    document.getElementById('app-wrapper').classList.add('loaded');
+                    showNotif("Система STRANNIK v3.0 запущена");
                 }, 1000);
-            }, 2000);
+            }, 3000);
         };
 
-        function toggleDetails(id) {
-            const el = document.getElementById(id);
-            if (el.style.maxHeight) {
-                el.style.maxHeight = null;
-            } else {
-                document.querySelectorAll('.details-pane').forEach(p => p.style.maxHeight = null);
-                el.style.maxHeight = el.scrollHeight + "px";
+        window.addEventListener('resize', () => {
+            if (renderer) {
+                renderer.setSize(window.innerWidth, 300);
+                camera.aspect = window.innerWidth / 400;
+                camera.updateProjectionMatrix();
             }
-        }
+            mCanvas.width = window.innerWidth;
+            mCanvas.height = window.innerHeight;
+        });
 
-        // ГЛАВНАЯ ФУНКЦИЯ ОПЛАТЫ (БЕЗ 404)
-        function handlePayment() {
-            // Прямая команда на открытие Сбера. Это не сайт, это протокол.
-            const sberLink = "https://www.sberbank.ru/sms/pbpn?p=79604373681";
-            
-            // Пробуем перейти. Если на телефоне есть Сбер — он перехватит ссылку.
-            window.location.href = sberLink;
-
-            // Если через 2.5 сек ничего не произошло (клиент остался на странице), 
-            // значит авто-переход не сработал. Показываем QR.
-            setTimeout(() => {
-                document.getElementById('qrModal').style.display = 'flex';
-            }, 2500);
-        }
-
-        function closeQR() {
-            document.getElementById('qrModal').style.display = 'none';
-        }
     </script>
 </body>
 </html>
