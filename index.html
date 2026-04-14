@@ -3,27 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STRANNIK | Exclusive Digital ID</title>
+    <title>STRANNIK | Digital ID</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --bg: #050505;
-            --accent: #ff3e3e; /* Тот самый красный как на "Копейке" */
-            --card-bg: #121212;
-            --text-main: #ffffff;
-            --text-dim: #888888;
+            --accent: #ff3e3e;
+            --card: #121212;
         }
-
         body {
-            background-color: var(--bg);
-            color: var(--text-main);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            margin: 0;
+            background: var(--bg);
+            color: white;
+            font-family: sans-serif;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            justify-content: center;
             padding: 20px;
+            margin: 0;
         }
+        .app {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            animation: slideUp 0.5s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            margin: 40px 0 10px;
+            text-transform: uppercase;
+        }
+        .line {
+            width: 50px;
+            height: 3px;
+            background: var(--accent);
+            margin: 0 auto 40px;
+        }
+        .btn {
+            background: var(--card);
+            border: 1px solid #222;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            transition: 0.2s;
+        }
+        .btn:active { transform: scale(0.96); border-color: var(--accent); }
+        .icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,62,62,0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--accent);
+        }
+        .text-group { text-align: left; }
+        .title { display: block; font-weight: bold; font-size: 1rem; }
+        .desc { font-size: 0.8rem; color: #777; }
+        
+        #medData {
+            display: none;
+            background: #111;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: left;
+            border-left: 3px solid var(--accent);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="logo">STRANNIK</div>
+        <div class="line"></div>
 
-        /*
+        <a href="https://t.me/твой_логин" class="btn">
+            <div class="icon"><i class="fas fa-paper-plane"></i></div>
+            <div class="text-group">
+                <span class="title">Связаться в TG</span>
+                <span class="desc">Личный контакт владельца</span>
+            </div>
+        </a>
+
+        <div class="btn" onclick="document.getElementById('medData').style.display='block'">
+            <div class="icon"><i class="fas fa-file-medical"></i></div>
+            <div class="text-group">
+                <span class="title">Medical ID</span>
+                <span class="desc">Данные для экстренных служб</span>
+            </div>
+        </div>
+        
+        <div id="medData">
+            Группа крови: <b>A+ (II)</b><br>
+            Аллергия: <b>Не выявлена</b><br>
+            Контакт: <b>+7 (900) 000-00-00</b>
+        </div>
+
+        <div class="btn" onclick="alert('Доступ только по физической карте STRANNIK')">
+            <div class="icon"><i class="fas fa-key"></i></div>
+            <div class="text-group">
+                <span class="title">Приватный сейф</span>
+                <span class="desc">Документы и ключи</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
