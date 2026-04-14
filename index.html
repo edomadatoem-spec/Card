@@ -3,120 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STRANNIK | Digital ID</title>
+    <title>STRANNIK | Cyber Systems</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --bg: #050505;
             --accent: #ff3e3e;
-            --card: #121212;
+            --card: #0f0f0f;
+            --neon: rgba(255, 62, 62, 0.6);
         }
-        body {
+
+        body, html {
             background: var(--bg);
             color: white;
-            font-family: sans-serif;
-            display: flex;
-            justify-content: center;
-            padding: 20px;
+            font-family: 'Orbitron', sans-serif; /* Футуристичный вид */
             margin: 0;
+            overflow-x: hidden;
         }
+
+        /* ЗАСТАВКА (INTRO) */
+        #intro {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 1s ease;
+        }
+
+        .glitch {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 7px;
+            color: var(--accent);
+            text-transform: uppercase;
+            animation: glitch 1s infinite;
+        }
+
+        .cyber-text {
+            font-family: monospace;
+            font-size: 0.6rem;
+            color: #444;
+            margin-top: 15px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 2px 0 red, -2px 0 cyan; }
+            50% { text-shadow: -2px 0 red, 2px 0 cyan; }
+            100% { text-shadow: 2px 0 red, -2px 0 cyan; }
+        }
+
+        /* ОСНОВНОЙ КОНТЕНТ */
         .app {
+            display: none; /* Скрыто до конца интро */
             width: 100%;
             max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
             text-align: center;
-            animation: slideUp 0.5s ease;
         }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .logo-main {
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+            margin: 30px 0;
+            color: #fff;
+            border-left: 3px solid var(--accent);
+            padding-left: 10px;
+            text-align: left;
         }
-        .logo {
-            font-size: 2rem;
-            font-weight: 900;
-            letter-spacing: 5px;
-            margin: 40px 0 10px;
-            text-transform: uppercase;
-        }
-        .line {
-            width: 50px;
-            height: 3px;
-            background: var(--accent);
-            margin: 0 auto 40px;
-        }
+
         .btn {
             background: var(--card);
-            border: 1px solid #222;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
+            border: 1px solid #1a1a1a;
+            padding: 22px;
+            border-radius: 4px; /* Острые углы под киберпанк */
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             text-decoration: none;
             color: white;
-            transition: 0.2s;
+            transition: 0.3s;
+            position: relative;
         }
-        .btn:active { transform: scale(0.96); border-color: var(--accent); }
+
+        .btn:active {
+            background: var(--accent);
+            transform: scale(0.98);
+        }
+
         .icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(255,62,62,0.1);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
+            font-size: 1.3rem;
+            margin-right: 20px;
             color: var(--accent);
         }
+
+        .btn:active .icon { color: white; }
+
         .text-group { text-align: left; }
-        .title { display: block; font-weight: bold; font-size: 1rem; }
-        .desc { font-size: 0.8rem; color: #777; }
-        
-        #medData {
-            display: none;
-            background: #111;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            text-align: left;
-            border-left: 3px solid var(--accent);
-            font-size: 0.9rem;
+        .title { display: block; font-weight: bold; font-size: 0.9rem; text-transform: uppercase; }
+        .desc { font-size: 0.7rem; color: #555; }
+
+        /* Кнопка Оплаты */
+        .btn-pay {
+            border: 1px solid var(--accent);
+            box-shadow: 0 0 10px rgba(255, 62, 62, 0.2);
         }
     </style>
 </head>
 <body>
-    <div class="app">
-        <div class="logo">STRANNIK</div>
-        <div class="line"></div>
 
-        <a href="https://t.me/твой_логин" class="btn">
-            <div class="icon"><i class="fas fa-paper-plane"></i></div>
+    <div id="intro">
+        <div class="glitch">STRANNIK SOFT</div>
+        <div class="cyber-text">
+            SYSTEM STATUS: ENCRYPTED<br>
+            STABLISHING SECURE CONNECTION...<br>
+            <span style="color: var(--accent)">PROTECTING YOUR LEGACY.</span>
+        </div>
+    </div>
+
+    <div class="app" id="mainApp">
+        <div class="logo-main">STRANNIK_OPS</div>
+
+        <a href="https://qr.nspk.ru/AS10003P4DPD3C6V90B6G8A11027M8N1?type=01&bank=100000000007&sum=0&cur=RUB&crc=8D67" 
+           class="btn btn-pay">
+            <div class="icon"><i class="fas fa-ruble-sign"></i></div>
             <div class="text-group">
-                <span class="title">Связаться в TG</span>
-                <span class="desc">Личный контакт владельца</span>
+                <span class="title">Quick Pay // СБП</span>
+                <span class="desc">Безопасный перевод без комиссии</span>
             </div>
         </a>
 
-        <div class="btn" onclick="document.getElementById('medData').style.display='block'">
-            <div class="icon"><i class="fas fa-file-medical"></i></div>
+        <a href="https://t.me/your_tg" class="btn">
+            <div class="icon"><i class="fas fa-terminal"></i></div>
             <div class="text-group">
-                <span class="title">Medical ID</span>
-                <span class="desc">Данные для экстренных служб</span>
+                <span class="title">Secure Channel</span>
+                <span class="desc">Связь через зашифрованный протокол</span>
             </div>
-        </div>
-        
-        <div id="medData">
-            Группа крови: <b>A+ (II)</b><br>
-            Аллергия: <b>Не выявлена</b><br>
-            Контакт: <b>+7 (900) 000-00-00</b>
+        </a>
+
+        <div class="btn" onclick="alert('Доступ заблокирован. Ожидание сигнала NFC...')">
+            <div class="icon"><i class="fas fa-fingerprint"></i></div>
+            <div class="text-group">
+                <span class="title">Private Vault</span>
+                <span class="desc">Зашифрованные документы</span>
+            </div>
         </div>
 
-        <div class="btn" onclick="alert('Доступ только по физической карте STRANNIK')">
-            <div class="icon"><i class="fas fa-key"></i></div>
-            <div class="text-group">
-                <span class="title">Приватный сейф</span>
-                <span class="desc">Документы и ключи</span>
-            </div>
+        <div style="margin-top: 50px; font-size: 0.6rem; color: #222;">
+            © 2026 STRANNIK SOFT. ALL RIGHTS RESERVED.
         </div>
     </div>
+
+    <script>
+        // Скрипт заставки
+        setTimeout(() => {
+            document.getElementById('intro').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('intro').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+            }, 1000);
+        }, 3000); // 3 секунды заставка
+    </script>
 </body>
 </html>
