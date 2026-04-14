@@ -3,51 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STRANNIK SOFT | Digital Ecosystem</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>STRANNIK | Premium Digital Card</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Rajdhani:wght@300;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;600&display=swap');
 
         :root {
-            --accent: #ff3e3e;
-            --bg: #030303;
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
+            --bg: #000000;
+            --accent: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-dim: #888888;
         }
 
         body, html {
             margin: 0; padding: 0;
-            background: var(--bg);
-            color: #fff;
-            font-family: 'Rajdhani', sans-serif;
-            overflow-x: hidden;
+            background-color: var(--bg);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
             height: 100%;
+            display: flex;
+            justify-content: center;
         }
 
-        /* ЖИВОЙ ФОН */
-        .bg-animate {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at 50% 50%, #1a0505 0%, #030303 100%);
-        }
-        .blob {
-            position: absolute;
-            width: 300px; height: 300px;
-            background: var(--accent);
-            filter: blur(120px);
-            border-radius: 50%;
-            opacity: 0.15;
-            animation: move 15s infinite alternate;
-        }
-
-        @keyframes move {
-            from { transform: translate(-10%, -10%); }
-            to { transform: translate(100%, 80%); }
-        }
-
-        /* ЗАСТАВКА (INTRO) */
-        #intro {
+        /* ЭКРАН ЗАГРУЗКИ */
+        #loader {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: #000;
@@ -55,201 +36,208 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 10000;
-            transition: 1s ease;
+            z-index: 9999;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .nfc-loader {
-            width: 80px; height: 80px;
-            border: 2px solid var(--accent);
-            border-radius: 15px;
-            display: flex; align-items: center; justify-content: center;
-            animation: rotateNFC 3s infinite ease-in-out;
-            box-shadow: 0 0 30px var(--accent);
+        .loader-logo {
+            font-weight: 100;
+            letter-spacing: 12px;
+            font-size: 1.2rem;
             margin-bottom: 20px;
-        }
-        .nfc-loader i { font-size: 2.5rem; color: var(--accent); }
-
-        @keyframes rotateNFC {
-            0% { transform: perspective(500px) rotateY(0deg); }
-            50% { transform: perspective(500px) rotateY(180deg); box-shadow: 0 0 50px var(--accent); }
-            100% { transform: perspective(500px) rotateY(360deg); }
+            opacity: 0;
+            animation: fadeIn 1.5s forwards ease-in-out;
         }
 
-        .loading-text {
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 5px;
-            font-size: 0.8rem;
-            color: var(--accent);
-            text-shadow: 0 0 10px var(--accent);
+        .loader-line {
+            width: 0; height: 1px;
+            background: var(--accent);
+            animation: growLine 2.5s forwards cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* ОСНОВНОЙ ИНТЕРФЕЙС */
-        .app {
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes growLine { from { width: 0; } to { width: 150px; } }
+
+        /* ОСНОВНОЙ КОНТЕНТ */
+        .container {
             display: none;
-            padding: 30px 20px;
-            max-width: 450px;
-            margin: 0 auto;
+            width: 100%;
+            max-width: 390px;
+            padding: 60px 25px;
+            animation: reveal 1s forwards ease-out;
         }
+
+        @keyframes reveal { from { opacity: 0; } to { opacity: 1; } }
 
         header {
-            text-align: left;
-            margin-bottom: 40px;
-            border-left: 4px solid var(--accent);
-            padding-left: 15px;
+            text-align: center;
+            margin-bottom: 60px;
         }
-        .logo { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; letter-spacing: 2px; }
-        .status { font-size: 0.7rem; color: #555; text-transform: uppercase; margin-top: 5px; }
+
+        .main-logo {
+            font-weight: 300;
+            font-size: 1.8rem;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .subtitle {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 3px;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
 
         /* КНОПКИ */
-        .card-btn {
-            background: var(--glass);
-            backdrop-filter: blur(15px);
+        .action-card {
+            background: var(--card-bg);
             border: 1px solid var(--border);
-            padding: 20px;
-            border-radius: 20px;
+            border-radius: 2px; /* Почти острые углы для строгости */
+            padding: 24px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             text-decoration: none;
-            color: #fff;
-            margin-bottom: 15px;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            overflow: hidden;
-            position: relative;
+            color: white;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
-        .card-btn::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-            transition: 0.5s;
-        }
-        .card-btn:active { transform: scale(0.95); border-color: var(--accent); }
-        .card-btn:active::before { left: 100%; }
 
-        .btn-icon {
-            width: 50px; height: 50px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            margin-right: 20px;
+        .action-card:active {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(1px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .card-icon {
+            font-size: 1.1rem;
+            width: 30px;
             color: var(--accent);
-            font-size: 1.4rem;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            margin-right: 20px;
+            font-weight: 100;
         }
 
-        .btn-info b { display: block; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-info span { font-size: 0.75rem; color: #888; }
-
-        /* СПЕЦ КНОПКА ОПЛАТЫ */
-        .pay-btn { border: 1px solid rgba(255, 62, 62, 0.3); background: linear-gradient(145deg, rgba(255,62,62,0.05) 0%, rgba(0,0,0,0) 100%); }
-
-        /* ИНФО-БЛОК */
-        #medical {
-            display: none;
-            background: rgba(255, 62, 62, 0.05);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px dashed var(--accent);
+        .card-text b {
+            display: block;
+            font-weight: 400;
             font-size: 0.9rem;
-            line-height: 1.6;
-            animation: fadeIn 0.5s;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
         }
-        @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+
+        .card-text span {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+
+        /* МЕД КАРТА */
+        #medicalInfo {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            background: rgba(255, 255, 255, 0.02);
+            margin-bottom: 12px;
+        }
+
+        .med-content {
+            padding: 20px;
+            font-size: 0.8rem;
+            border-left: 1px solid var(--accent);
+            color: var(--text-dim);
+            line-height: 1.8;
+        }
 
         footer {
-            margin-top: 40px;
+            margin-top: 80px;
             text-align: center;
             font-size: 0.6rem;
             color: #333;
-            letter-spacing: 2px;
+            letter-spacing: 4px;
         }
     </style>
 </head>
 <body>
 
-    <div class="bg-animate"><div class="blob"></div></div>
-
-    <div id="intro">
-        <div class="nfc-loader">
-            <i class="fa-solid fa-nfc-symbol"></i>
-        </div>
-        <div class="loading-text" id="loadText">ENCRYPTING...</div>
+    <div id="loader">
+        <div class="loader-logo">STRANNIK</div>
+        <div class="loader-line"></div>
     </div>
 
-    <div class="app" id="mainApp">
+    <div class="container" id="content">
         <header>
-            <div class="logo">STRANNIK<span style="color:var(--accent)">.</span>SOFT</div>
-            <div class="status">System: Secure // Location: Maykop</div>
+            <div class="main-logo">STRANNIK</div>
+            <div class="subtitle">Digital Identity Systems</div>
         </header>
 
-        <a href="https://qr.nspk.ru/proxy-api/v1/payment/link/transfer?phone=79604373681&bank=100000000007" 
-           class="card-btn pay-btn">
-            <div class="btn-icon"><i class="fa-solid fa-bolt-lightning"></i></div>
-            <div class="btn-info">
-                <b>Quick Pay SBP</b>
-                <span>Мгновенный перевод на 8..36-81</span>
+        <a href="https://qr.nspk.ru/proxy-api/v1/payment/link/transfer?phone=79604373681" class="action-card">
+            <div class="card-icon"><i class="fa-thin fa- wallet"></i><i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem;"></i></div>
+            <div class="card-text">
+                <b>Payment Terminal</b>
+                <span>Secure SBP Transfer // 8 (960) 437-36-81</span>
             </div>
         </a>
 
-        <a href="https://t.me/strannik_soft_official" class="card-btn">
-            <div class="btn-icon"><i class="fa-brands fa-telegram"></i></div>
-            <div class="btn-info">
-                <b>Secure Chat</b>
-                <span>Прямая связь с разработчиком</span>
+        <a href="https://t.me/edomadatoem_spec" class="action-card">
+            <div class="card-icon"><i class="fa-brands fa-telegram-plane"></i></div>
+            <div class="card-text">
+                <b>Secure Messenger</b>
+                <span>Direct encrypted communication</span>
             </div>
         </a>
 
-        <div class="card-btn" onclick="toggleMed()">
-            <div class="btn-icon"><i class="fa-solid fa-shield-heart"></i></div>
-            <div class="btn-info">
-                <b>Bio-Metric ID</b>
-                <span>Экстренная мед-карта</span>
+        <div class="action-card" onclick="toggleMed()">
+            <div class="card-icon"><i class="fa-solid fa-dna"></i></div>
+            <div class="card-text">
+                <b>Bio-Metric Data</b>
+                <span>Emergency medical record access</span>
             </div>
         </div>
 
-        <div id="medical">
-            <span style="color:var(--accent)">●</span> Blood: A+ (II)<br>
-            <span style="color:var(--accent)">●</span> Allergy: None detected<br>
-            <span style="color:var(--accent)">●</span> Emergency Contact: +7 (960) 437-36-81
+        <div id="medicalInfo">
+            <div class="med-content">
+                BLOOD TYPE: A+ (II)<br>
+                ALLERGIES: NONE RECORDED<br>
+                EMERGENCY CONTACT: +7 960 437-36-81<br>
+                STATUS: ACTIVE
+            </div>
         </div>
 
-        <div class="card-btn" onclick="alert('ERROR: Physical hardware key not detected.')">
-            <div class="btn-icon"><i class="fa-solid fa-fingerprint"></i></div>
-            <div class="btn-info">
-                <b>Neural Vault</b>
-                <span>Личные документы (Зашифровано)</span>
+        <div class="action-card" style="opacity: 0.5;">
+            <div class="card-icon"><i class="fa-solid fa-lock"></i></div>
+            <div class="card-text">
+                <b>Storage Vault</b>
+                <span>Hardware key required for access</span>
             </div>
         </div>
 
         <footer>
-            V.2.0.4-PRO // TERMINAL ACCESS ONLY<br>
-            © 2026 STRANNIK DEVELOPMENT
+            EST. 2026 // MAYKOP CITY
         </footer>
     </div>
 
     <script>
-        // Анимация заставки
-        const texts = ["ENCRYPTING...", "LINKING NFC...", "STRANNIK SOFT", "READY"];
-        let i = 0;
-        const textElem = document.getElementById('loadText');
-        
-        const interval = setInterval(() => {
-            textElem.innerText = texts[i];
-            i++;
-            if(i >= texts.length) clearInterval(interval);
-        }, 800);
-
-        setTimeout(() => {
-            document.getElementById('intro').style.opacity = '0';
+        // Скрипт заставки
+        window.onload = () => {
             setTimeout(() => {
-                document.getElementById('intro').style.display = 'none';
-                document.getElementById('mainApp').style.display = 'block';
-            }, 1000);
-        }, 3500);
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    document.getElementById('content').style.display = 'block';
+                }, 800);
+            }, 2800);
+        }
 
         function toggleMed() {
-            const m = document.getElementById('medical');
-            m.style.display = m.style.display === 'block' ? 'none' : 'block';
+            const info = document.getElementById('medicalInfo');
+            if (info.style.maxHeight) {
+                info.style.maxHeight = null;
+            } else {
+                info.style.maxHeight = info.scrollHeight + "px";
+            }
         }
     </script>
 </body>
