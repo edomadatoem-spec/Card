@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STRANNIK | PREMIER</title>
+    <title>STRANNIK | PREMIER ACCESS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;600&display=swap');
 
         :root {
             --bg: #050505;
             --gold: #d4af37;
-            --card-bg: rgba(20, 20, 20, 0.8);
-            --border: rgba(212, 175, 55, 0.2);
+            --card-bg: rgba(20, 20, 20, 0.95);
+            --border: rgba(212, 175, 55, 0.3);
         }
 
         body, html {
@@ -20,121 +20,143 @@
             background: var(--bg);
             color: #fff;
             font-family: 'Inter', sans-serif;
-            height: 100%;
             overflow: hidden;
+            height: 100%;
         }
 
-        /* ПРЕМИАЛЬНЫЙ ФОН */
-        .glow-bg {
+        .background-glow {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% -20%, #1a1510 0%, #050505 100%);
+            background: radial-gradient(circle at 50% -10%, #1e1a11 0%, #050505 100%);
             z-index: -1;
         }
 
-        /* КНОПКИ */
         .container {
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             margin: 0 auto;
-            padding: 80px 25px;
+            padding: 50px 25px;
             box-sizing: border-box;
             text-align: center;
         }
 
-        .main-logo {
-            font-weight: 100;
-            font-size: 2.5rem;
-            letter-spacing: 12px;
-            margin-bottom: 60px;
-            color: #fff;
-            text-transform: uppercase;
-        }
+        .logo { font-weight: 100; font-size: 2.2rem; letter-spacing: 15px; margin-bottom: 50px; text-transform: uppercase; }
 
-        .action-card {
+        /* ГЛАВНАЯ КНОПКА С ПУЛЬСАЦИЕЙ */
+        .btn-pay {
             background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
+            border: 1px solid var(--gold);
             border-radius: 20px;
             padding: 25px;
-            margin-bottom: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.3s;
+            animation: pulseGold 3s infinite;
+        }
+
+        @keyframes pulseGold {
+            0%, 100% { box-shadow: 0 0 5px rgba(212, 175, 55, 0.2); }
+            50% { box-shadow: 0 0 25px rgba(212, 175, 55, 0.4); border-color: #fff; }
+        }
+
+        .btn-pay:active { transform: scale(0.95); }
+
+        .icon { font-size: 1.5rem; color: var(--gold); margin-right: 20px; }
+        .info { text-align: left; }
+        .info b { display: block; font-size: 1.1rem; letter-spacing: 1px; }
+        .info span { font-size: 0.8rem; color: #777; }
+
+        /* МОДАЛЬНОЕ ОКНО С QR */
+        #qr-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .qr-card {
+            background: #111;
+            padding: 30px;
+            border-radius: 30px;
+            border: 1px solid var(--gold);
+            text-align: center;
+            width: 80%;
+            max-width: 300px;
+            position: relative;
+        }
+
+        .qr-card img {
+            width: 100%;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            filter: brightness(1.1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: -50px; right: 0;
+            color: #fff; font-size: 2rem;
+        }
+
+        /* ОСТАЛЬНЫЕ КНОПКИ */
+        .btn-simple {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             text-decoration: none;
             color: #fff;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: pulseIn 1s ease-out;
         }
 
-        @keyframes pulseIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-
-        /* ЭФФЕКТ ПУЛЬСАЦИИ ОПЛАТЫ */
-        .pay-card {
-            border: 1px solid var(--gold);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
-            animation: breathe 3s infinite ease-in-out;
-        }
-
-        @keyframes breathe {
-            0%, 100% { box-shadow: 0 0 5px rgba(212, 175, 55, 0.1); }
-            50% { box-shadow: 0 0 25px rgba(212, 175, 55, 0.3); border-color: #fff; }
-        }
-
-        .icon-box {
-            width: 50px; height: 50px;
-            background: rgba(212, 175, 55, 0.1);
-            border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            margin-right: 20px;
-            color: var(--gold);
-            font-size: 1.4rem;
-        }
-
-        .info-box { text-align: left; }
-        .info-box b { display: block; font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 4px; }
-        .info-box span { font-size: 0.8rem; color: #888; }
-
-        footer {
-            margin-top: 100px;
-            font-size: 0.6rem;
-            color: #333;
-            letter-spacing: 6px;
-        }
+        footer { margin-top: 80px; font-size: 0.6rem; color: #222; letter-spacing: 5px; }
     </style>
 </head>
 <body>
 
-    <div class="glow-bg"></div>
+    <div class="background-glow"></div>
 
     <div class="container">
-        <div class="main-logo">STRANNIK</div>
+        <div class="logo">STRANNIK</div>
 
-        <a href="https://www.sberbank.ru/sms/pbpn?p=79604373681" class="action-card pay-card">
-            <div class="icon-box"><i class="fa-solid fa-ruble-sign"></i></div>
-            <div class="info-box">
-                <b>Быстрая оплата</b>
-                <span>Прямой перевод на 8..36-81</span>
-            </div>
-        </a>
-
-        <a href="https://t.me/edomadatoem_spec" class="action-card">
-            <div class="icon-box"><i class="fa-brands fa-telegram"></i></div>
-            <div class="info-box">
-                <b>Связь с владельцем</b>
-                <span>Личный Telegram канал</span>
-            </div>
-        </a>
-
-        <div class="action-card" onclick="alert('Группа: A+ (II) | Контакт: +79604373681')">
-            <div class="icon-box"><i class="fa-solid fa-dna"></i></div>
-            <div class="info-box">
-                <b>Медицинский профиль</b>
-                <span>Данные для экстренных служб</span>
+        <div class="btn-pay" onclick="openQR()">
+            <div class="icon"><i class="fa-solid fa-qrcode"></i></div>
+            <div class="info">
+                <b>Оплатить через СБП</b>
+                <span>Мгновенный перевод по QR</span>
             </div>
         </div>
 
-        <footer>© 2026 // MAYKOP // PREMIUM ACCESS</footer>
+        <a href="https://t.me/edomadatoem_spec" class="btn-simple">
+            <div class="icon"><i class="fa-brands fa-telegram"></i></div>
+            <div class="info">
+                <b>Telegram</b>
+                <span>Личный контакт</span>
+            </div>
+        </a>
+
+        <footer>STRANNIK // MAYKOP // 2026</footer>
     </div>
 
+    <div id="qr-modal" onclick="closeQR()">
+        <div class="qr-card" onclick="event.stopPropagation()">
+            <div class="close-btn">&times;</div>
+            <img src="https://i.ibb.co/Xxd9nS8/qr-placeholder.png" id="qr-image" alt="QR Code">
+            <p style="font-size: 0.9rem; color: var(--gold);">Отсканируйте или нажмите на QR для оплаты</p>
+        </div>
+    </div>
+
+    <script>
+        function openQR() { document.getElementById('qr-modal').style.display = 'flex'; }
+        function closeQR() { document.getElementById('qr-modal').style.display = 'none'; }
+    </script>
 </body>
 </html>
