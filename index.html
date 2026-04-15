@@ -3,160 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STRANNIK | Digital ID</title>
+    <title>STRANNIK | Tactical ID</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --bg: #050505;
-            --wolf-blue: #a0d8f0;
-            --frost-white: rgba(255, 255, 255, 0.9);
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(160, 216, 240, 0.2);
+            --bg: #000000;
+            --accent: #a0d8f0;
+            --text-main: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.5);
+            --line: rgba(255, 255, 255, 0.08);
+            --glass: rgba(10, 10, 10, 0.7);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; }
-
-        /* Фоновый волк */
-        #bg {
-            position: absolute; inset: 0;
-            background: url('https://w.forfun.com/fetch/f2/f2f518e3a51f08a5c36f56f10c0e1564.jpeg') center/cover;
-            opacity: 0.12; filter: grayscale(1); z-index: 1;
-        }
-
-        #ui { position: relative; z-index: 10; height: 100%; display: flex; flex-direction: column; padding: 30px 20px; }
-
-        .header h1 { font-weight: 200; letter-spacing: 10px; color: var(--frost-white); margin-bottom: 5px; }
-        .id-badge { font-size: 10px; color: var(--wolf-blue); letter-spacing: 2px; opacity: 0.6; }
-
-        /* Контейнер вкладок */
-        .main-card {
-            background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border); border-radius: 24px;
-            padding: 25px; margin-top: auto; margin-bottom: 20px;
-        }
-
-        /* Кнопки действий */
-        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-
-        .action-btn {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-            border-radius: 16px; padding: 20px; color: #fff;
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
-            cursor: pointer; transition: 0.3s;
-        }
-
-        .action-btn i { font-size: 24px; color: var(--wolf-blue); }
-        .action-btn span { font-size: 12px; font-weight: 300; letter-spacing: 1px; }
-        .action-btn:active { background: var(--wolf-blue); color: #000; }
-        .action-btn:active i { color: #000; }
-
-        /* Модальное окно соцсетей */
-        #social-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-            z-index: 100; display: none; align-items: center; justify-content: center;
-            backdrop-filter: blur(10px);
-        }
-
-        .social-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 80%;
-        }
-
-        .social-item {
-            background: var(--glass); border: 1px solid var(--border);
-            padding: 20px; border-radius: 20px; display: flex; flex-direction: column;
-            align-items: center; gap: 10px; text-decoration: none; color: #fff;
-        }
         
-        .social-item i { font-size: 30px; }
-        .fa-telegram { color: #0088cc; }
-        .fa-vk { color: #4c75a3; }
-        .fa-whatsapp { color: #25d366; }
-        .fa-instagram { color: #e1306c; }
+        body { 
+            background: var(--bg); color: var(--text-main); 
+            font-family: 'Inter', -apple-system, sans-serif;
+            height: 100vh; overflow: hidden;
+        }
 
-        .close-btn {
-            position: absolute; top: 40px; right: 30px;
-            font-size: 30px; color: var(--wolf-blue);
+        /* ФОН С ВОЛКОМ */
+        #wolf-bg {
+            position: absolute; inset: 0;
+            background: linear-gradient(to bottom, transparent 40%, #000 95%),
+                        url('https://w.forfun.com/fetch/f2/f2f518e3a51f08a5c36f56f10c0e1564.jpeg') center 20%/cover;
+            opacity: 0.4; z-index: 1; filter: grayscale(1);
+        }
+
+        #ui {
+            position: relative; z-index: 10; height: 100%;
+            display: flex; flex-direction: column; padding: 40px 25px;
+        }
+
+        /* ЗАГОЛОВОК */
+        .header { margin-bottom: 40px; }
+        .header h1 { font-weight: 200; letter-spacing: 12px; font-size: 22px; margin-bottom: 8px; }
+        .header .status { font-size: 9px; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; }
+
+        /* СПИСОК МЕНЮ */
+        .menu-list {
+            margin-top: auto;
+            border-top: 1px solid var(--line);
+        }
+
+        .menu-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 22px 5px;
+            border-bottom: 1px solid var(--line);
+            text-decoration: none; color: inherit;
+            transition: 0.3s;
+        }
+
+        .menu-item:active { background: rgba(255,255,255,0.03); }
+
+        .item-info { display: flex; align-items: center; gap: 15px; }
+        .item-info i { width: 20px; font-size: 18px; color: var(--text-dim); text-align: center; }
+        .item-info span { font-size: 14px; letter-spacing: 1px; font-weight: 300; text-transform: uppercase; }
+
+        .arrow { font-size: 12px; color: var(--line); }
+
+        /* СПЕЦИАЛЬНАЯ КНОПКА СБП */
+        .sbp-item {
+            border: 1px solid var(--accent);
+            margin-top: 20px; border-radius: 4px;
+            background: rgba(160, 216, 240, 0.05);
+        }
+        .sbp-item span { color: var(--accent) !important; font-weight: 600 !important; }
+        .sbp-item i { color: var(--accent) !important; }
+
+        /* ПУЛЬСАЦИЯ ГЛАЗ (ЭФФЕКТ) */
+        .wolf-glow {
+            position: absolute; top: 22%; left: 45%;
+            width: 40px; height: 10px;
+            box-shadow: 0 0 40px 5px rgba(160, 216, 240, 0.2);
+            z-index: 2; border-radius: 50%;
         }
 
     </style>
 </head>
 <body>
 
-<div id="bg"></div>
+    <div id="wolf-bg"></div>
+    <div class="wolf-glow"></div>
 
-<div id="ui">
-    <div class="header">
-        <h1>STRANNIK</h1>
-        <div class="id-badge">DIGITAL ARTIFACT // N0-79604373681</div>
-    </div>
+    <div id="ui">
+        <div class="header">
+            <h1>STRANNIK</h1>
+            <div class="status">● System Authenticated</div>
+        </div>
 
-    <div class="main-card">
-        <p style="font-size: 14px; line-height: 1.6; opacity: 0.8; font-weight: 300;">
-            Доступ к системе авторизован. Выберите модуль взаимодействия для связи с владельцем или поддержки проекта.
-        </p>
+        <div class="menu-list">
+            <a href="https://t.me/p_strannik" class="menu-item">
+                <div class="item-info">
+                    <i class="fa-brands fa-telegram"></i>
+                    <span>Telegram Messenger</span>
+                </div>
+                <div class="arrow"><i class="fa-solid fa-chevron-right"></i></div>
+            </a>
 
-        <div class="actions">
-            <div class="action-btn" onclick="openSocials()">
-                <i class="fa-solid fa-share-nodes"></i>
-                <span>СОЦ. СЕТИ</span>
-            </div>
-            <div class="action-btn" onclick="paySBP()">
-                <i class="fa-solid fa-mobile-screen"></i>
-                <span>ПЕРЕВОД СБП</span>
-            </div>
+            <a href="https://vk.com/p_strannik" class="menu-item">
+                <div class="item-info">
+                    <i class="fa-brands fa-vk"></i>
+                    <span>Vkontakte Profile</span>
+                </div>
+                <div class="arrow"><i class="fa-solid fa-chevron-right"></i></div>
+            </a>
+
+            <a href="https://wa.me/79604373681" class="menu-item">
+                <div class="item-info">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <span>WhatsApp Chat</span>
+                </div>
+                <div class="arrow"><i class="fa-solid fa-chevron-right"></i></div>
+            </a>
+
+            <a href="https://instagram.com/p_strannik" class="menu-item">
+                <div class="item-info">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>Instagram Studio</span>
+                </div>
+                <div class="arrow"><i class="fa-solid fa-chevron-right"></i></div>
+            </a>
+
+            <a href="javascript:void(0)" onclick="payUniversal()" class="menu-item sbp-item">
+                <div class="item-info">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Мгновенный перевод СБП</span>
+                </div>
+                <div class="arrow"><i class="fa-solid fa-chevron-right" style="color: var(--accent);"></i></div>
+            </a>
         </div>
     </div>
-</div>
 
-<div id="social-modal">
-    <div class="close-btn" onclick="closeSocials()">&times;</div>
-    <div class="social-grid">
-        <a href="https://t.me/p_strannik" class="social-item">
-            <i class="fa-brands fa-telegram"></i>
-            <span>TG</span>
-        </a>
-        <a href="https://vk.com/p_strannik" class="social-item">
-            <i class="fa-brands fa-vk"></i>
-            <span>VK</span>
-        </a>
-        <a href="https://wa.me/79604373681" class="social-item">
-            <i class="fa-brands fa-whatsapp"></i>
-            <span>WA</span>
-        </a>
-        <a href="https://instagram.com/p_strannik" class="social-item">
-            <i class="fa-brands fa-instagram"></i>
-            <span>INST</span>
-        </a>
-    </div>
-</div>
+    <script>
+        function payUniversal() {
+            if (window.navigator.vibrate) window.navigator.vibrate([40, 40, 40]);
+            
+            /* Универсальный Deeplink СБП. 
+               В РФ формат "https://qr.nspk.ru/..." является стандартом.
+               Если мы хотим именно выбор банков, лучше всего использовать 
+               универсальную платежную страницу или ссылку, которая не имеет 
+               жесткой привязки к Сберу.
+            */
+            
+            // Вариант 1: Ссылка, которая вызывает системное меню выбора (на большинстве Android)
+            const sbpUrl = "bank100000000111://qr.nspk.ru/AD10005XXXXXXX?type=02&bank=100000000007&sum=0&cur=RUB&crc=XXXX";
+            
+            // Но самый надежный способ для частного лица БЕЗ ЮKassa - это ссылка Тинькофф или Райффайзен, 
+            // они позволяют выбрать банк отправителя. 
+            // Давай поставим универсальный переход на форму перевода по номеру:
+            window.location.href = "https://www.tinkoff.ru/rm/79604373681/XXXXX"; 
+            // БРАТ: Вставь сюда свою ссылку на "Запрос денег" из Тинькофф или любого банка, 
+            // где есть выбор СБП.
+        }
 
-<script>
-    function openSocials() {
-        document.getElementById('social-modal').style.display = 'flex';
-        vibrate(50);
-    }
-
-    function closeSocials() {
-        document.getElementById('social-modal').style.display = 'none';
-    }
-
-    function paySBP() {
-        vibrate([50, 30, 50]);
-        // Универсальный способ перевода через СБП (Deeplink)
-        // При нажатии на S23 Ultra вылезет окно выбора банка
-        window.location.href = "https://www.sberbank.ru/sms/pbpn?p=79604373681";
-        
-        /* Альтернатива для других банков, если хочешь именно выбор:
-           window.location.href = "https://qr.nspk.ru/..."; 
-           Но ссылка Сбера выше — самая стабильная в РФ для частных переводов.
-        */
-    }
-
-    function vibrate(p) {
-        if (window.navigator.vibrate) window.navigator.vibrate(p);
-    }
-</script>
-
+        // Эффект параллакса при движении телефона (для S23 Ultra)
+        window.addEventListener('deviceorientation', (e) => {
+            const bg = document.getElementById('wolf-bg');
+            const x = e.gamma / 20; 
+            const y = e.beta / 20;
+            bg.style.transform = `scale(1.1) translate(${x}px, ${y}px)`;
+        });
+    </script>
 </body>
 </html>
