@@ -3,138 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STRANNIK | Nordic v1.0</title>
+    <title>STRANNIK | Digital ID</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --dark-bg: #050505;
-            --wolf-eye: #a0d8f0; /* Ледяной синий */
-            --steel: rgba(160, 160, 160, 0.3);
-            --frost: rgba(255, 255, 255, 0.03);
-            --font: 'Space Mono', monospace; /* Четкий, техничный шрифт */
+            --bg: #050505;
+            --wolf-blue: #a0d8f0;
+            --frost-white: rgba(255, 255, 255, 0.9);
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(160, 216, 240, 0.2);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; }
 
-        body { 
-            background: var(--dark-bg); color: #fff; font-family: var(--font); 
-            overflow: hidden; height: 100vh;
+        /* Фоновый волк */
+        #bg {
+            position: absolute; inset: 0;
+            background: url('https://w.forfun.com/fetch/f2/f2f518e3a51f08a5c36f56f10c0e1564.jpeg') center/cover;
+            opacity: 0.12; filter: grayscale(1); z-index: 1;
         }
 
-        /* АНИМИРОВАННЫЙ ВОЛК НА ФОНЕ */
-        #wolf-container {
-            position: absolute; inset: 0; z-index: 1;
-            background-image: url('https://w.forfun.com/fetch/f2/f2f518e3a51f08a5c36f56f10c0e1564.jpeg'); /* Прямая ссылка на волка с синими глазами */
-            background-size: cover; background-position: center;
-            opacity: 0.15; filter: grayscale(1) blur(1px);
-            animation: breath 15s ease-in-out infinite;
-            will-change: transform;
+        #ui { position: relative; z-index: 10; height: 100%; display: flex; flex-direction: column; padding: 30px 20px; }
+
+        .header h1 { font-weight: 200; letter-spacing: 10px; color: var(--frost-white); margin-bottom: 5px; }
+        .id-badge { font-size: 10px; color: var(--wolf-blue); letter-spacing: 2px; opacity: 0.6; }
+
+        /* Контейнер вкладок */
+        .main-card {
+            background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border); border-radius: 24px;
+            padding: 25px; margin-top: auto; margin-bottom: 20px;
         }
 
-        /* ИНТЕРФЕЙС */
-        #ui {
-            position: relative; z-index: 10; height: 100%;
-            display: flex; flex-direction: column; padding: 30px 20px;
-            box-sizing: border-box; justify-content: space-between;
+        /* Кнопки действий */
+        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+
+        .action-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            border-radius: 16px; padding: 20px; color: #fff;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            cursor: pointer; transition: 0.3s;
         }
 
-        .header h1 { 
-            font-weight: 200; letter-spacing: 12px; font-size: 26px; 
-            margin: 0; color: #fff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-            font-family: 'Norwester', var(--font); /* Поищи Norwester или используй аналог */
+        .action-btn i { font-size: 24px; color: var(--wolf-blue); }
+        .action-btn span { font-size: 12px; font-weight: 300; letter-spacing: 1px; }
+        .action-btn:active { background: var(--wolf-blue); color: #000; }
+        .action-btn:active i { color: #000; }
+
+        /* Модальное окно соцсетей */
+        #social-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            z-index: 100; display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(10px);
         }
 
-        .sys-line { font-size: 10px; color: var(--steel); text-transform: uppercase; letter-spacing: 2px; margin-top: 5px; }
-
-        .frost-card {
-            background: var(--frost); backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(160, 160, 160, 0.1);
-            border-radius: 20px; padding: 25px; margin-top: auto; margin-bottom: 20px;
+        .social-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 80%;
         }
 
-        .status-dot { 
-            width: 8px; height: 8px; background: var(--wolf-eye); border-radius: 50%; 
-            display: inline-block; margin-right: 10px; 
-            box-shadow: 0 0 15px var(--wolf-eye); animation: pulse 2s infinite; 
+        .social-item {
+            background: var(--glass); border: 1px solid var(--border);
+            padding: 20px; border-radius: 20px; display: flex; flex-direction: column;
+            align-items: center; gap: 10px; text-decoration: none; color: #fff;
         }
+        
+        .social-item i { font-size: 30px; }
+        .fa-telegram { color: #0088cc; }
+        .fa-vk { color: #4c75a3; }
+        .fa-whatsapp { color: #25d366; }
+        .fa-instagram { color: #e1306c; }
 
-        .description { font-size: 14px; line-height: 1.7; opacity: 0.7; font-weight: 300; margin-top: 15px; }
-
-        /* ЛЕДЯНАЯ КНОПКА СБП */
-        .btn-frost {
-            background: transparent; border: 1px solid var(--wolf-eye);
-            color: var(--wolf-eye); border-radius: 12px;
-            padding: 22px; font-size: 13px; font-weight: 800;
-            letter-spacing: 3px; text-transform: uppercase; cursor: pointer; transition: 0.4s;
-            box-shadow: 0 0 20px rgba(160, 216, 240, 0.15);
-            display: flex; align-items: center; justify-content: center; gap: 12px;
+        .close-btn {
+            position: absolute; top: 40px; right: 30px;
+            font-size: 30px; color: var(--wolf-blue);
         }
-
-        .btn-frost:active { background: var(--wolf-eye); color: #000; transform: scale(0.96); box-shadow: 0 0 30px var(--wolf-eye); }
-
-        /* ИКОНКИ БАНКОВ */
-        .banks { display: flex; gap: 10px; justify-content: center; margin-top: 15px; opacity: 0.3; filter: grayscale(1); }
-        .banks img { height: 16px; }
-
-        @keyframes breath { 
-            0%, 100% { transform: scale(1); } 
-            50% { transform: scale(1.05); } 
-        }
-        @keyframes pulse { 0% { box-shadow: 0 0 15px var(--wolf-eye); } 50% { box-shadow: 0 0 5px var(--wolf-eye); } 100% { box-shadow: 0 0 15px var(--wolf-eye); } }
 
     </style>
 </head>
 <body>
 
-<div id="wolf-container"></div>
+<div id="bg"></div>
 
 <div id="ui">
     <div class="header">
         <h1>STRANNIK</h1>
-        <div class="sys-line">NORDIC OS / AUTHENTICATED</div>
+        <div class="id-badge">DIGITAL ARTIFACT // N0-79604373681</div>
     </div>
 
-    <div class="frost-card">
-        <div style="font-family: monospace; font-size: 12px; display: flex; align-items: center;">
-            <div class="status-dot"></div>
-            WOLFSPIRIT v1.0
-        </div>
-        <p class="description">
-            Авторизация пройдена. Локальный ИИ 'STRANNIK' загружен в ядро. <br>
-            Ваш дух-наставник Волк активирован. <br>
-            Поддержите проект для доступа к закрытым каналам.
+    <div class="main-card">
+        <p style="font-size: 14px; line-height: 1.6; opacity: 0.8; font-weight: 300;">
+            Доступ к системе авторизован. Выберите модуль взаимодействия для связи с владельцем или поддержки проекта.
         </p>
-    </div>
 
-    <button class="btn-frost" onclick="invokePayment()">
-        <i class="fa-solid fa-ice-skating"></i> АКТИВИРОВАТЬ ЧЕРЕЗ ЮKASSA / СБП
-    </button>
-    
-    <div class="banks">
-        <span style="font-size: 10px; letter-spacing: 1px;">SBERPAY • TINKOFF PAY • MIR • SBP</span>
+        <div class="actions">
+            <div class="action-btn" onclick="openSocials()">
+                <i class="fa-solid fa-share-nodes"></i>
+                <span>СОЦ. СЕТИ</span>
+            </div>
+            <div class="action-btn" onclick="paySBP()">
+                <i class="fa-solid fa-mobile-screen"></i>
+                <span>ПЕРЕВОД СБП</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="social-modal">
+    <div class="close-btn" onclick="closeSocials()">&times;</div>
+    <div class="social-grid">
+        <a href="https://t.me/p_strannik" class="social-item">
+            <i class="fa-brands fa-telegram"></i>
+            <span>TG</span>
+        </a>
+        <a href="https://vk.com/p_strannik" class="social-item">
+            <i class="fa-brands fa-vk"></i>
+            <span>VK</span>
+        </a>
+        <a href="https://wa.me/79604373681" class="social-item">
+            <i class="fa-brands fa-whatsapp"></i>
+            <span>WA</span>
+        </a>
+        <a href="https://instagram.com/p_strannik" class="social-item">
+            <i class="fa-brands fa-instagram"></i>
+            <span>INST</span>
+        </a>
     </div>
 </div>
 
 <script>
-    const wolf = document.getElementById('wolf-container');
-    
-    // Параллакс эффект для S23 Ultra
-    if (window.DeviceOrientationEvent) {
-        window.addEventListener('deviceorientation', (e) => {
-            const tiltX = e.beta / 90; // Наклон вперед/назад (-1 до 1)
-            const tiltY = e.gamma / 90; // Наклон влево/вправо (-1 до 1)
-            
-            wolf.style.backgroundPositionX = (50 - tiltY * 10) + '%';
-            wolf.style.backgroundPositionY = (50 - tiltX * 10) + '%';
-        });
+    function openSocials() {
+        document.getElementById('social-modal').style.display = 'flex';
+        vibrate(50);
     }
 
-    function invokePayment() {
-        if (window.navigator.vibrate) window.navigator.vibrate([30, 20, 30, 50, 30, 20, 30]); // Агрессивная вибрация
+    function closeSocials() {
+        document.getElementById('social-modal').style.display = 'none';
+    }
+
+    function paySBP() {
+        vibrate([50, 30, 50]);
+        // Универсальный способ перевода через СБП (Deeplink)
+        // При нажатии на S23 Ultra вылезет окно выбора банка
+        window.location.href = "https://www.sberbank.ru/sms/pbpn?p=79604373681";
         
-        // БРАТ: Сюда вставляешь свою ссылку ЮMoney/ЮKassa (как договаривались)
-        window.location.href = "https://yoomoney.ru/to/41001XXXXXXXXXXXX"; 
+        /* Альтернатива для других банков, если хочешь именно выбор:
+           window.location.href = "https://qr.nspk.ru/..."; 
+           Но ссылка Сбера выше — самая стабильная в РФ для частных переводов.
+        */
+    }
+
+    function vibrate(p) {
+        if (window.navigator.vibrate) window.navigator.vibrate(p);
     }
 </script>
+
 </body>
 </html>
