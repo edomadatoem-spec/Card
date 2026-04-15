@@ -7,18 +7,19 @@
     <style>
         body { background: #000; color: #fff; font-family: -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
         .container { width: 85%; text-align: center; }
-        .logo { font-size: 24px; letter-spacing: 12px; font-weight: 200; margin-bottom: 50px; color: #fff; text-transform: uppercase; }
+        .logo { font-size: 24px; letter-spacing: 12px; font-weight: 200; margin-bottom: 50px; text-transform: uppercase; }
         
-        /* Та самая кнопка-триггер */
-        .pay-button {
+        .pay-trigger {
             display: block; background: #fff; color: #000;
-            padding: 22px; border-radius: 12px;
+            padding: 25px; border-radius: 12px;
             text-decoration: none; font-weight: 800;
-            font-size: 14px; letter-spacing: 1px;
-            box-shadow: 0 10px 30px rgba(255,255,255,0.1);
+            font-size: 14px; letter-spacing: 2px;
+            box-shadow: 0 10px 40px rgba(255,255,255,0.1);
+            transition: 0.2s;
         }
+        .pay-trigger:active { transform: scale(0.95); }
         
-        .footer { margin-top: 30px; font-size: 10px; color: #444; letter-spacing: 2px; text-transform: uppercase; }
+        .status { margin-top: 30px; font-size: 10px; color: #333; letter-spacing: 3px; }
     </style>
 </head>
 <body>
@@ -26,11 +27,11 @@
     <div class="container">
         <div class="logo">STRANNIK</div>
         
-        <a href="https://qr.nspk.ru/proxy-api/v1/payment-link?type=02&bank=100000000004&sum=0&cur=RUB&phone=79604373681" class="pay-button">
-            ОПЛАТИТЬ ЧЕРЕЗ СБП
+        <a href="https://qr.nspk.ru/proxy-api/v1/payment-link?type=02&bank=100000000004&sum=0&cur=RUB&phone=79604373681" class="pay-trigger">
+            ОПЛАТИТЬ ПО СБП
         </a>
 
-        <div class="footer">Digital Asset Verified</div>
+        <div class="status">ENCRYPTED CONNECTION</div>
     </div>
 
 </body>
