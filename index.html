@@ -2,112 +2,25 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STRANNIK ID</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        :root { --blue: #5db7de; --bg: #000; --card: rgba(20, 20, 20, 0.9); }
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden; }
-
-        /* Фоновый волк - теперь он четкий и снизу */
-        #bg-wolf {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 70%;
-            background: linear-gradient(to top, #000 5%, transparent 60%),
-                        url('https://w.forfun.com/fetch/f2/f2f518e3a51f08a5c36f56f10c0e1564.jpeg') center top/cover;
-            filter: grayscale(1); opacity: 0.6; z-index: 1;
-        }
-
-        #content { position: relative; z-index: 10; height: 100%; display: flex; flex-direction: column; padding: 40px 20px; }
-
-        .header { margin-bottom: 30px; border-left: 2px solid var(--blue); padding-left: 15px; }
-        .header h1 { letter-spacing: 5px; font-weight: 300; font-size: 24px; }
-        .header p { font-size: 10px; color: var(--blue); letter-spacing: 2px; text-transform: uppercase; margin-top: 5px; }
-
-        .menu-list { margin-top: 20px; background: var(--card); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px); }
-
-        .menu-link {
-            display: flex; align-items: center; padding: 20px;
-            text-decoration: none; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.05);
-            transition: 0.2s;
-        }
-        .menu-link:last-child { border: none; }
-        .menu-link:active { background: rgba(255,255,255,0.05); }
-
-        .menu-link i { width: 30px; font-size: 20px; color: var(--blue); margin-right: 15px; }
-        .menu-link .label { flex-grow: 1; font-size: 14px; letter-spacing: 1px; font-weight: 300; }
-        .menu-link .arrow { opacity: 0.3; font-size: 12px; }
-
-        /* Кнопка СБП - ТЕПЕРЬ ОНА ГЛАВНАЯ */
-        .pay-section { margin-top: 20px; }
-        .btn-sbp {
-            background: #fff; color: #000; border-radius: 15px; padding: 20px;
-            display: flex; align-items: center; justify-content: center; gap: 15px;
-            font-weight: 800; letter-spacing: 1px; text-decoration: none;
-            box-shadow: 0 10px 30px rgba(255,255,255,0.1);
-        }
-        .btn-sbp i { font-size: 20px; }
+        body { background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { width: 85%; max-width: 350px; background: #111; border: 1px solid #222; border-radius: 20px; padding: 30px; text-align: center; }
+        .name { font-size: 24px; letter-spacing: 6px; font-weight: 200; margin-bottom: 40px; }
+        .pay-btn { display: block; background: #fff; color: #000; padding: 22px; text-decoration: none; border-radius: 15px; font-weight: 800; font-size: 14px; letter-spacing: 1px; transition: 0.2s; }
+        .pay-btn:active { transform: scale(0.95); background: #ccc; }
+        .contact { color: #555; margin-top: 25px; font-size: 12px; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
-<div id="bg-wolf"></div>
-
-<div id="content">
-    <div class="header">
-        <h1>STRANNIK</h1>
-        <p>Digital Identity // Verified</p>
+    <div class="card">
+        <div class="name">STRANNIK</div>
+        
+        <a href="https://www.tinkoff.ru/rm/79604373681/XXXXX" class="pay-btn">ОПЛАТИТЬ ЧЕРЕЗ СБП</a>
+        
+        <div class="contact">ID: +7 (960) 437-36-81</div>
     </div>
-
-    <div class="menu-list">
-        <a href="https://t.me/p_strannik" class="menu-link">
-            <i class="fa-brands fa-telegram"></i>
-            <div class="label">Telegram Messenger</div>
-            <div class="arrow"><i class="fa-solid fa-chevron-right"></i></div>
-        </a>
-        <a href="https://vk.com/p_strannik" class="menu-link">
-            <i class="fa-brands fa-vk"></i>
-            <div class="label">Vkontakte</div>
-            <div class="arrow"><i class="fa-solid fa-chevron-right"></i></div>
-        </a>
-        <a href="https://wa.me/79604373681" class="menu-link">
-            <i class="fa-brands fa-whatsapp"></i>
-            <div class="label">WhatsApp Direct</div>
-            <div class="arrow"><i class="fa-solid fa-chevron-right"></i></div>
-        </a>
-        <a href="https://instagram.com/p_strannik" class="menu-link">
-            <i class="fa-brands fa-instagram"></i>
-            <div class="label">Instagram</div>
-            <div class="arrow"><i class="fa-solid fa-chevron-right"></i></div>
-        </a>
-    </div>
-
-    <div class="pay-section">
-        <a href="https://www.sberbank.ru/sms/pbpn?p=79604373681" class="btn-sbp" id="payBtn">
-            <i class="fa-solid fa-money-bill-transfer"></i>
-            ПЕРЕВЕСТИ ЧЕРЕЗ СБП
-        </a>
-    </div>
-</div>
-
-<script>
-    // Фишка для S23 Ultra: вибрация при клике
-    document.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            if (window.navigator.vibrate) window.navigator.vibrate(30);
-        });
-    });
-
-    // Решение по выбору банка:
-    // Чтобы у пользователя вылез выбор, мы можем использовать специальный формат.
-    // Если на телефоне стоит несколько банков, ссылка ниже часто вызывает меню выбора.
-    document.getElementById('payBtn').addEventListener('click', function(e) {
-        // Мы оставляем базовую ссылку, но если ты хочешь именно "окно выбора",
-        // то лучше всего работает ссылка на "Запрос денег" из Тинькофф.
-        // Она сама рисует кнопки всех банков.
-    });
-</script>
 
 </body>
 </html>
