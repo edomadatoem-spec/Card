@@ -3,35 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>STRANNIK ID</title>
+    <title>STRANNIK | PAY GATE</title>
     <style>
-        body { background: #000; color: #fff; font-family: -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .container { width: 85%; text-align: center; }
-        .logo { font-size: 24px; letter-spacing: 12px; font-weight: 200; margin-bottom: 50px; text-transform: uppercase; }
+        :root { --bg: #000; --card: #111; --text: #fff; --accent: #222; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
+        body { background: var(--bg); color: var(--text); display: flex; align-items: center; justify-content: center; min-height: 100vh; }
         
-        .pay-trigger {
-            display: block; background: #fff; color: #000;
-            padding: 25px; border-radius: 12px;
-            text-decoration: none; font-weight: 800;
-            font-size: 14px; letter-spacing: 2px;
-            box-shadow: 0 10px 40px rgba(255,255,255,0.1);
-            transition: 0.2s;
+        .container { width: 90%; max-width: 400px; text-align: center; }
+        .header { margin-bottom: 30px; letter-spacing: 5px; font-weight: 200; font-size: 18px; color: #888; }
+        
+        .bank-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        
+        .bank-btn {
+            background: var(--card); border: 1px solid var(--accent);
+            padding: 20px 10px; border-radius: 16px;
+            text-decoration: none; color: #fff;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+            transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .pay-trigger:active { transform: scale(0.95); }
-        
-        .status { margin-top: 30px; font-size: 10px; color: #333; letter-spacing: 3px; }
+        .bank-btn:active { background: #222; transform: scale(0.96); }
+        .bank-btn img { width: 35px; height: 35px; border-radius: 10px; }
+        .bank-btn span { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+
+        .full-width { grid-column: span 2; background: #fff; color: #000; padding: 22px; margin-top: 10px; }
+        .full-width span { font-size: 12px; font-weight: 800; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="logo">STRANNIK</div>
+        <div class="header">ВЫБЕРИТЕ ВАШ БАНК</div>
         
-        <a href="https://qr.nspk.ru/proxy-api/v1/payment-link?type=02&bank=100000000004&sum=0&cur=RUB&phone=79604373681" class="pay-trigger">
-            ОПЛАТИТЬ ПО СБП
-        </a>
+        <div class="bank-grid">
+            <a href="https://www.sberbank.ru/sms/pbpn?p=79604373681" class="bank-btn">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/73/Sberbank_Logo_2020.svg" alt="Sber">
+                <span>Сбербанк</span>
+            </a>
 
-        <div class="status">ENCRYPTED CONNECTION</div>
+            <a href="https://www.tinkoff.ru/rm/79604373681/xXJvM927" class="bank-btn">
+                <img src="https://acdn.tinkoff.ru/static/documents/4971a81e-1f25-4c6e-8126-5a46747970d2.png" alt="T-Bank">
+                <span>Т-Банк</span>
+            </a>
+
+            <a href="yoomoney://transfer/p2p?phone=79604373681" class="bank-btn">
+                <img src="https://yoomoney.ru/i/yoomoney-logo-v2.png" alt="Yoomoney" style="background: #fff; padding: 2px;">
+                <span>ЮMoney</span>
+            </a>
+
+            <a href="https://click.alfabank.ru/transfer/p2p?phone=79604373681" class="bank-btn">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Alfa-Bank_Logo.svg" alt="Alfa">
+                <span>Альфа</span>
+            </a>
+
+            <a href="https://www.tinkoff.ru/rm/79604373681/xXJvM927" class="bank-btn full-width">
+                <span>ЛЮБОЙ ДРУГОЙ БАНК (СБП)</span>
+            </a>
+        </div>
     </div>
 
 </body>
