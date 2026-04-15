@@ -2,24 +2,35 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>STRANNIK ID</title>
     <style>
-        body { background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .card { width: 85%; max-width: 350px; background: #111; border: 1px solid #222; border-radius: 20px; padding: 30px; text-align: center; }
-        .name { font-size: 24px; letter-spacing: 6px; font-weight: 200; margin-bottom: 40px; }
-        .pay-btn { display: block; background: #fff; color: #000; padding: 22px; text-decoration: none; border-radius: 15px; font-weight: 800; font-size: 14px; letter-spacing: 1px; transition: 0.2s; }
-        .pay-btn:active { transform: scale(0.95); background: #ccc; }
-        .contact { color: #555; margin-top: 25px; font-size: 12px; letter-spacing: 1px; }
+        body { background: #000; color: #fff; font-family: -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .container { width: 85%; text-align: center; }
+        .logo { font-size: 24px; letter-spacing: 12px; font-weight: 200; margin-bottom: 50px; color: #fff; text-transform: uppercase; }
+        
+        /* Та самая кнопка-триггер */
+        .pay-button {
+            display: block; background: #fff; color: #000;
+            padding: 22px; border-radius: 12px;
+            text-decoration: none; font-weight: 800;
+            font-size: 14px; letter-spacing: 1px;
+            box-shadow: 0 10px 30px rgba(255,255,255,0.1);
+        }
+        
+        .footer { margin-top: 30px; font-size: 10px; color: #444; letter-spacing: 2px; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <div class="name">STRANNIK</div>
+    <div class="container">
+        <div class="logo">STRANNIK</div>
         
-        <a href="https://www.tinkoff.ru/rm/79604373681/XXXXX" class="pay-btn">ОПЛАТИТЬ ЧЕРЕЗ СБП</a>
-        
-        <div class="contact">ID: +7 (960) 437-36-81</div>
+        <a href="https://qr.nspk.ru/proxy-api/v1/payment-link?type=02&bank=100000000004&sum=0&cur=RUB&phone=79604373681" class="pay-button">
+            ОПЛАТИТЬ ЧЕРЕЗ СБП
+        </a>
+
+        <div class="footer">Digital Asset Verified</div>
     </div>
 
 </body>
